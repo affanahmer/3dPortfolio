@@ -91,12 +91,17 @@ export default function Contact() {
           </motion.div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-24 pt-8 border-t border-[var(--color-border-subtle)] text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+          className="mt-24 pt-8 border-t border-[var(--color-border-subtle)] text-center"
+        >
           <p className="text-sm text-[var(--color-text-secondary)]">
             © {new Date().getFullYear()} — Built with precision. Powered by passion.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

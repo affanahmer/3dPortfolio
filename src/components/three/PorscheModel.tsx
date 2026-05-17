@@ -78,7 +78,9 @@ const SCROLL_KEYFRAMES: Keyframe[] = [
   { progress: 1.0,  rotationY: -6.28,  rotationX: 0,     positionX: 0,    positionY: 0,    positionZ: 0,    scale: 1.0  },
 ];
 
-function lerpKeyframes(progress: number): { rotationY: number; positionX: number; positionY: number; scale: number } {
+type KeyframeResult = { rotationY: number; rotationX: number; positionX: number; positionY: number; positionZ: number; scale: number };
+
+function lerpKeyframes(progress: number): KeyframeResult {
   const clamped = Math.max(0, Math.min(1, progress));
 
   // Find surrounding keyframes
@@ -96,8 +98,10 @@ function lerpKeyframes(progress: number): { rotationY: number; positionX: number
 
   return {
     rotationY: a.rotationY + (b.rotationY - a.rotationY) * smoothT,
+    rotationX: a.rotationX + (b.rotationX - a.rotationX) * smoothT,
     positionX: a.positionX + (b.positionX - a.positionX) * smoothT,
     positionY: a.positionY + (b.positionY - a.positionY) * smoothT,
+    positionZ: a.positionZ + (b.positionZ - a.positionZ) * smoothT,
     scale: a.scale + (b.scale - a.scale) * smoothT,
   };
 }
@@ -228,43 +232,27 @@ function GLBModel({ scrollProgress = 0, color = "#E8000D" }: PorscheModelProps) 
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
-
-    // Scroll-driven keyframe interpolation
     const kf = lerpKeyframes(scrollProgress);
+    const damping = 0.05;
 
-    // Apply scroll-driven rotation (GSAP-controlled via prop)
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(
-      groupRef.current.rotation.y,
-      kf.rotationY,
-      0.05 // Smooth damping — not instant snap
-    );
-
-    // Apply scroll-driven position
-    groupRef.current.position.x = THREE.MathUtils.lerp(
-      groupRef.current.position.x,
-      kf.positionX,
-      0.05
-    );
-
-    // Anti-gravity float (Profile A — GT Hover) layered on top of scroll position
-    const floatY = Math.sin(t * 0.6) * 0.08;
-    groupRef.current.position.y = THREE.MathUtils.lerp(
-      groupRef.current.position.y,
-      kf.positionY + floatY,
-      0.08
-    );
-
-    // Breathing scale layered on scroll scale
-    const breathe = kf.scale + Math.sin(t * 0.8) * 0.003;
-    const currentScale = groupRef.current.scale.x;
-    const targetScale = THREE.MathUtils.lerp(currentScale, breathe, 0.05);
-    groupRef.current.scale.setScalar(targetScale);
-
+    // Scroll-driven rotation Y (turntable)
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, kf.rotationY, damping);
+    // Scroll-driven rotation X (tilt for interior zoom etc.) + subtle rock
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, kf.rotationX + Math.sin(t * 0.3) * 0.003, damping);
     // Subtle Z tilt — imperceptible rotation gives life
     groupRef.current.rotation.z = Math.sin(t * 0.4) * 0.005;
 
-    // Very subtle X rock
-    groupRef.current.rotation.x = Math.sin(t * 0.3) * 0.003;
+    // Scroll-driven position X (slide left/right per section)
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, kf.positionX, damping);
+    // Y: Anti-gravity float layered on scroll position
+    const floatY = Math.sin(t * 0.6) * 0.08;
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, kf.positionY + floatY, 0.08);
+    // Z: Depth (zoom in/out per section)
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, kf.positionZ, damping);
+
+    // Breathing scale layered on scroll scale
+    const breathe = kf.scale + Math.sin(t * 0.8) * 0.003;
+    groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, breathe, damping));
   });
 
   return (
@@ -338,17 +326,19 @@ function PlaceholderModel({ scrollProgress = 0, color = "#E8000D" }: PorscheMode
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
     const kf = lerpKeyframes(scrollProgress);
+    const damping = 0.05;
 
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, kf.rotationY, 0.05);
-    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, kf.positionX, 0.05);
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, kf.rotationY, damping);
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, kf.rotationX + Math.sin(t * 0.3) * 0.003, damping);
+    groupRef.current.rotation.z = Math.sin(t * 0.4) * 0.008;
 
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, kf.positionX, damping);
     const floatY = Math.sin(t * 0.6) * 0.12;
     groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, kf.positionY + floatY, 0.08);
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, kf.positionZ, damping);
 
     const breathe = kf.scale + Math.sin(t * 0.8) * 0.004;
-    groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, breathe, 0.05));
-
-    groupRef.current.rotation.z = Math.sin(t * 0.4) * 0.008;
+    groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, breathe, damping));
   });
 
   return (

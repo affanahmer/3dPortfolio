@@ -1,61 +1,26 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   wordStagger,
   letterVariants,
   staggerContainer,
   fadeInUp,
 } from "@/animations/variants";
-import Scene from "@/components/three/Scene";
-import PorscheModel from "@/components/three/PorscheModel";
 import HUDOverlay from "@/components/ui/HUDOverlay";
 import Button from "@/components/ui/Button";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
 /**
- * Hero Section (Page 1)
- * Cinematic first impression — Porsche 911 GT3 RS + massive typography
- * Full-viewport with R3F canvas, HUD telemetry, and racing stripe
- *
- * The scrollProgress state is driven by GSAP ScrollTrigger:
- * - Tracks the entire document scroll (0 = top, 1 = bottom)
- * - Passed to PorscheModel for scroll-driven rotation/position keyframes
+ * Hero Section (Page 1 — Porsche Spotlight)
+ * 
+ * The 3D Porsche canvas is now a PERSISTENT fixed layer rendered in page.tsx.
+ * This component is pure content overlay — name, subtitle, CTAs, HUD telemetry.
+ * Every text element uses staggered motion.div entrance.
  */
 
 const heroName = "AFFAN KHAN";
 
 export default function Hero() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-
-  // GSAP ScrollTrigger — drives the car's rotation/position through sections
-  useEffect(() => {
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      scrollTriggerRef.current = ScrollTrigger.create({
-        trigger: document.documentElement,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.5,
-        onUpdate: (self) => {
-          setScrollProgress(self.progress);
-        },
-      });
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      scrollTriggerRef.current?.kill();
-    };
-  }, []);
-
   return (
     <section
       id="hero"
@@ -64,28 +29,16 @@ export default function Hero() {
       {/* Racing stripe diagonal */}
       <div className="racing-stripe top-1/3 -left-1/4 pointer-events-none" />
 
-      {/* HUD Overlay */}
+      {/* HUD Overlay — telemetry corners */}
       <HUDOverlay />
 
-      {/* 3D Canvas — Porsche Model with scroll-driven animation */}
-      <div className="absolute inset-0 z-[var(--z-canvas)]">
-        <Scene
-          cameraPosition={[3, 1.5, 5]}
-          cameraFov={40}
-          showPostProcessing={true}
-          showContactShadows={true}
-        >
-          <PorscheModel scrollProgress={scrollProgress} />
-        </Scene>
-      </div>
-
-      {/* Content overlay */}
+      {/* Content overlay — staggered entrance */}
       <div className="relative z-[var(--z-content)] flex flex-col items-center text-center px-6 pointer-events-none">
-        {/* Section number */}
+        {/* Section number — fades in */}
         <motion.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.15 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
           className="absolute -top-16 text-[12rem] font-bold font-[family-name:var(--font-racing)] text-white leading-none select-none"
         >
           01
@@ -111,7 +64,7 @@ export default function Hero() {
           ))}
         </motion.h1>
 
-        {/* Subtitle */}
+        {/* Subtitle — blur deblur entrance */}
         <motion.p
           initial={{ opacity: 0, filter: "blur(8px)" }}
           animate={{ opacity: 1, filter: "blur(0px)" }}
@@ -122,7 +75,7 @@ export default function Hero() {
           CREATIVE DEVELOPER & ENGINEER
         </motion.p>
 
-        {/* CTAs */}
+        {/* CTAs — stagger container */}
         <motion.div
           variants={staggerContainer}
           initial="initial"
