@@ -1,65 +1,132 @@
-import Image from "next/image";
+"use client";
+
+import { useRef } from "react";
+import dynamic from "next/dynamic";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import PageWrapper from "@/components/layout/PageWrapper";
+import Navbar from "@/components/navigation/Navbar";
+import SectionDots from "@/components/navigation/SectionDots";
+import Scene from "@/components/three/Scene";
+import PorscheModel from "@/components/three/PorscheModel";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+// Dynamic imports for sections to reduce initial bundle
+const Hero = dynamic(() => import("@/components/sections/Hero"), { ssr: false });
+const About = dynamic(() => import("@/components/sections/About"), { ssr: false });
+const Education = dynamic(() => import("@/components/sections/Education"), { ssr: false });
+const TechStack = dynamic(() => import("@/components/sections/TechStack"), { ssr: false });
+const Projects = dynamic(() => import("@/components/sections/Projects"), { ssr: false });
+const Social = dynamic(() => import("@/components/sections/Social"), { ssr: false });
+const Contact = dynamic(() => import("@/components/sections/Contact"), { ssr: false });
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAIN PAGE — 7-Section Scroll Architecture
+   
+   Key architecture change: The 3D canvas is now a PERSISTENT fixed layer
+   behind all sections (not embedded in Hero). This enables:
+   
+   1. Framer Motion useScroll → tracks global scroll progress (0–1)
+   2. useTransform maps scroll to a MotionValue consumed by PorscheModel
+   3. GSAP camera keyframes animate the car through cinematic poses
+      per section (zoom interior @ Education, drive-off @ Projects)
+   4. Each section's text uses staggered motion.div entrances
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * Persistent 3D background layer — renders the Porsche model
+ * Fixed position behind all content, receives scrollProgress
+ */
+function PersistentCanvas({ scrollProgress }: { scrollProgress: number }) {
+  return (
+    <div className="fixed inset-0 z-[var(--z-canvas)] pointer-events-none">
+      <Scene
+        cameraPosition={[3, 1.5, 5]}
+        cameraFov={40}
+        showPostProcessing={true}
+        showContactShadows={true}
+      >
+        <PorscheModel scrollProgress={scrollProgress} />
+      </Scene>
+    </div>
+  );
+}
+
+/**
+ * Scroll tracker — uses Framer Motion useScroll at the page level
+ * Maps scrollYProgress (0–1) to state consumed by the 3D layer
+ */
+function ScrollDriven3DCanvas() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Framer Motion useScroll — tracks entire page progress
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Map the MotionValue to a plain number for the 3D model
+  // We sample the MotionValue in a motion component and pass it down
+  const scrollProgressTransformed = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  return (
+    <div ref={containerRef} className="relative">
+      {/* Persistent 3D background — fixed behind all sections */}
+      <motion.div
+        style={{ opacity: 1 }}
+        className="contents"
+      >
+        <PersistentCanvasWithMotion scrollProgress={scrollProgressTransformed} />
+      </motion.div>
+
+      {/* 7-section content layer */}
+      <div className="relative z-[var(--z-content)]">
+        <Hero />
+        <About />
+        <Education />
+        <TechStack />
+        <Projects />
+        <Social />
+        <Contact />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Bridge component — reads the MotionValue and passes as plain number
+ * useTransform creates a MotionValue; we need to read it inside useFrame
+ */
+import { MotionValue, useMotionValueEvent } from "framer-motion";
+import { useState } from "react";
+
+function PersistentCanvasWithMotion({
+  scrollProgress,
+}: {
+  scrollProgress: MotionValue<number>;
+}) {
+  const [progress, setProgress] = useState(0);
+
+  useMotionValueEvent(scrollProgress, "change", (latest) => {
+    setProgress(latest);
+  });
+
+  return <PersistentCanvas scrollProgress={progress} />;
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <SmoothScroll>
+      <Navbar />
+      <SectionDots />
+      <PageWrapper>
+        <ScrollDriven3DCanvas />
+      </PageWrapper>
+    </SmoothScroll>
   );
 }

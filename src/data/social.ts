@@ -1,0 +1,58 @@
+import { SocialLink } from "@/types";
+
+export const socialLinks: SocialLink[] = [
+  {
+    id: "github",
+    platform: "GitHub",
+    handle: "@yourusername",
+    url: "https://github.com/yourusername",
+    icon: "github",
+    stat: "200+",
+    statLabel: "Repos",
+  },
+  {
+    id: "linkedin",
+    platform: "LinkedIn",
+    handle: "Your Name",
+    url: "https://linkedin.com/in/yourusername",
+    icon: "linkedin",
+    stat: "5K+",
+    statLabel: "Connections",
+  },
+  {
+    id: "twitter",
+    platform: "X (Twitter)",
+    handle: "@yourusername",
+    url: "https://x.com/yourusername",
+    icon: "twitter",
+    stat: "2K+",
+    statLabel: "Followers",
+  },
+  {
+    id: "youtube",
+    platform: "YouTube",
+    handle: "Your Channel",
+    url: "https://youtube.com/@yourusername",
+    icon: "youtube",
+    stat: "10K+",
+    statLabel: "Subscribers",
+  },
+  {
+    id: "instagram",
+    platform: "Instagram",
+    handle: "@yourusername",
+    url: "https://instagram.com/yourusername",
+    icon: "instagram",
+    stat: "3K+",
+    statLabel: "Followers",
+  },
+  {
+    id: "devto",
+    platform: "Dev.to",
+    handle: "@yourusername",
+    url: "https://dev.to/yourusername",
+    icon: "devto",
+    stat: "50+",
+    statLabel: "Posts",
+  },
+];
