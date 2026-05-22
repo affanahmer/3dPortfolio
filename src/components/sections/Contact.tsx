@@ -291,62 +291,78 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="section relative flex items-center py-24 md:py-0">
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
+    <section
+      id="contact"
+      className="relative min-h-screen w-full flex items-center justify-center py-[120px] px-6 md:px-20 max-w-[1280px] mx-auto bg-[#0A0A0A] border-x border-[#1A1A1A]/40 overflow-hidden"
+    >
+      {/* ─── SECTION NUMBER TAG ─── */}
+      <span className="absolute top-6 left-6 md:left-20 font-racing text-[11px] text-[#A0A0A0] tracking-[0.2em]">
+        07 / CONTACT
+      </span>
 
-        {/* Section number */}
-        <motion.span
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.08 }}
-          viewport={{ once: true }}
-          className="absolute top-8 right-8 text-[10rem] font-bold font-[family-name:var(--font-racing)] text-white leading-none select-none hidden md:block"
-        >
-          07
-        </motion.span>
+      <div className="w-full flex flex-col mt-8">
+        {/* Section Heading */}
+        <div className="relative">
+          <motion.h2
+            initial={{ opacity: 0, x: -60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-[#F5F5F5] mb-4 leading-none"
+          >
+            LET&apos;S BUILD SOMETHING
+          </motion.h2>
+          
+          {/* Red accent line under heading */}
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+            style={{ transformOrigin: "left" }}
+            className="w-[60px] h-[3px] bg-[#E8000D] mb-[64px]"
+          />
+        </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-
-          {/* ─── LEFT — Copy + Visual ─────────────────────────────────── */}
+        {/* Two-Column Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-[80px] items-start">
+          {/* ─── LEFT COLUMN — Copy + Visual ─── */}
           <motion.div
             variants={headingReveal}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
           >
-            <motion.span variants={fadeInUp} className="text-sm font-mono text-[var(--color-accent-red)] tracking-[0.3em] uppercase mb-4 block">
-              Get In Touch
-            </motion.span>
-            <motion.h2
-              variants={fadeInUp}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Let&apos;s <span className="text-gradient-gold">Build</span> Something
-            </motion.h2>
-            <motion.p variants={fadeInUp} className="text-lg text-[var(--color-text-secondary)] mb-10 leading-relaxed">
+            <p className="text-lg text-[#A0A0A0] mb-10 leading-relaxed">
               Whether you have a project in mind, want to collaborate, or just want to talk
               code — I&apos;m always up for a conversation.
-            </motion.p>
+            </p>
 
             {/* Contact details */}
-            <motion.div variants={staggerContainer} initial="initial" whileInView="animate" viewport={{ once: true }} className="space-y-4 mb-10">
+            <motion.div
+              variants={staggerContainer}
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true }}
+              className="space-y-4 mb-10"
+            >
               {[
                 { icon: "✉", label: "Email", value: "affan@example.com", href: "mailto:affan@example.com" },
                 { icon: "⚡", label: "Response time", value: "Within 24 hours", href: null },
                 { icon: "🌍", label: "Location", value: "Available Worldwide", href: null },
               ].map((item) => (
                 <motion.div key={item.label} variants={fadeInUp} className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 rounded-lg bg-[var(--color-accent-red)]/10 border border-[var(--color-accent-red)]/20 flex items-center justify-center text-base flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-[#E8000D]/10 border border-[#E8000D]/20 flex items-center justify-center text-base flex-shrink-0">
                     {item.icon}
                   </div>
                   <div>
-                    <p className="text-[10px] font-mono text-[var(--color-text-secondary)] tracking-widest uppercase">{item.label}</p>
+                    <p className="text-[10px] font-mono text-[#A0A0A0] tracking-widest uppercase">{item.label}</p>
                     {item.href ? (
-                      <a href={item.href} className="text-sm font-medium text-[var(--color-text-primary)] hover:text-[var(--color-accent-red)] transition-colors">
+                      <a href={item.href} className="text-sm font-medium text-[#F5F5F5] hover:text-[#E8000D] transition-colors">
                         {item.value}
                       </a>
                     ) : (
-                      <p className="text-sm font-medium text-[var(--color-text-primary)]">{item.value}</p>
+                      <p className="text-sm font-medium text-[#F5F5F5]">{item.value}</p>
                     )}
                   </div>
                 </motion.div>
@@ -356,11 +372,11 @@ export default function Contact() {
             {/* GT3 decorative card */}
             <motion.div
               variants={fadeInUp}
-              className="relative rounded-2xl border border-white/5 overflow-hidden flex items-center justify-center"
-              style={{ height: "180px", background: "linear-gradient(135deg, rgba(232,0,13,0.06) 0%, transparent 60%)" }}
+              className="relative rounded-[4px] border border-white/5 overflow-hidden flex items-center justify-center bg-[#111111] carbon-fiber"
+              style={{ height: "180px" }}
             >
-              <div className="text-[6rem] font-bold font-[family-name:var(--font-racing)] text-gradient-red opacity-10 select-none">GT3 RS</div>
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-red)]/40 to-transparent" />
+              <div className="text-[6rem] font-bold font-racing text-[#E8000D] opacity-10 select-none">GT3 RS</div>
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E8000D]/40 to-transparent" />
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
             </motion.div>
           </motion.div>

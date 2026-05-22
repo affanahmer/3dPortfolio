@@ -6,20 +6,15 @@ import { useLenis } from "@/hooks/useLenis";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import ProgressBar from "./ProgressBar";
 
-const NAV_ITEMS = [
-  { id: "hero", label: "Home", href: "#hero" },
-  { id: "about", label: "About", href: "#about" },
-  { id: "education", label: "Skills", href: "#education" },
-  { id: "techstack", label: "Tech", href: "#techstack" },
-  { id: "projects", label: "Projects", href: "#projects" },
-  { id: "social", label: "Connect", href: "#social" },
-  { id: "contact", label: "Contact", href: "#contact" },
+const NAV_LINKS = [
+  { label: "INTRO", href: "#about", index: 1 },
+  { label: "SKILLS", href: "#education", index: 2 },
+  { label: "ARSENAL", href: "#techstack", index: 3 },
+  { label: "GARAGE", href: "#projects", index: 4 },
+  { label: "TRACK", href: "#social", index: 5 },
+  { label: "BUILD", href: "#contact", index: 6 },
 ];
 
-/**
- * Fixed glass-morphism navigation bar
- * Features: smooth scroll via Lenis, mobile hamburger, active section tracking
- */
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { scrollTo } = useLenis();
@@ -32,96 +27,101 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Fixed progress bar at the very top */}
       <ProgressBar />
-      <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-[var(--z-nav)] glass rounded-full px-2 py-2 w-[90%] max-w-3xl"
-      >
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <button
-            onClick={() => handleNavClick("#hero")}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full hover:bg-white/5 transition-colors"
-          >
-            <span className="text-[var(--color-accent-red)] font-bold text-lg font-[var(--font-racing)]">
-              GT3
-            </span>
-            <span className="text-[var(--color-text-secondary)] text-sm hidden sm:block">
-              Portfolio
-            </span>
-          </button>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
-            {NAV_ITEMS.map((item, index) => (
+      <nav className="fixed top-0 left-0 w-full h-[56px] bg-[#0A0A0A]/80 backdrop-blur-[20px] border-b border-white/6 z-50 px-6 md:px-12 flex items-center justify-between select-none">
+        {/* Left: Monogram */}
+        <button
+          onClick={() => handleNavClick("#hero")}
+          className="font-racing font-bold text-[20px] text-[#E8000D] tracking-wider cursor-pointer"
+        >
+          AK
+        </button>
+
+        {/* Center: Desktop Menu */}
+        <div className="hidden md:flex items-center gap-8">
+          {NAV_LINKS.map((link) => {
+            const isActive = activeSection === link.index;
+            return (
               <button
-                key={item.id}
-                onClick={() => handleNavClick(item.href)}
-                className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 ${
-                  activeSection === index
-                    ? "bg-[var(--color-accent-red)] text-white"
-                    : "text-[var(--color-text-secondary)] hover:text-white hover:bg-white/5"
+                key={link.label}
+                onClick={() => handleNavClick(link.href)}
+                className={`font-racing font-medium text-[11px] tracking-[0.15em] transition-colors duration-300 cursor-pointer ${
+                  isActive ? "text-[#F5F5F5]" : "text-[#A0A0A0] hover:text-[#F5F5F5]"
                 }`}
               >
-                {item.label}
+                {link.label}
               </button>
-            ))}
-          </div>
-
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-full hover:bg-white/5 transition-colors"
-            aria-label="Toggle navigation menu"
-          >
-            <div className="w-5 h-4 flex flex-col justify-between">
-              <motion.span
-                animate={isOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-                className="block h-0.5 w-full bg-white rounded-full origin-left"
-              />
-              <motion.span
-                animate={isOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
-                className="block h-0.5 w-full bg-white rounded-full"
-              />
-              <motion.span
-                animate={isOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-                className="block h-0.5 w-full bg-white rounded-full origin-left"
-              />
-            </div>
-          </button>
+            );
+          })}
         </div>
 
-        {/* Mobile Menu */}
+        {/* Right: Available For Hire Pill */}
+        <div className="hidden md:block">
+          <motion.div
+            animate={{ opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="border border-[#E8000D] text-[#E8000D] font-racing text-[11px] font-bold py-[6px] px-[12px] tracking-[0.1em] rounded-[2px]"
+          >
+            AVAILABLE FOR HIRE
+          </motion.div>
+        </div>
+
+        {/* Mobile menu trigger */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden flex items-center justify-center p-2 cursor-pointer text-[#A0A0A0] hover:text-white"
+        >
+          <svg
+            className="w-6 h-6 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {isOpen ? <path d="M18 6L6 18M6 6l12 12" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
+          </svg>
+        </button>
+
+        {/* Mobile Dropdown Panel */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="md:hidden overflow-hidden"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-[56px] left-0 w-full bg-[#0A0A0A]/95 border-b border-white/6 flex flex-col items-center gap-4 py-6 md:hidden z-40"
             >
-              <div className="flex flex-col gap-1 pt-3 pb-2">
-                {NAV_ITEMS.map((item, index) => (
+              {NAV_LINKS.map((link) => {
+                const isActive = activeSection === link.index;
+                return (
                   <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item.href)}
-                    className={`px-4 py-2 rounded-lg text-sm text-left transition-all duration-200 ${
-                      activeSection === index
-                        ? "bg-[var(--color-accent-red)] text-white"
-                        : "text-[var(--color-text-secondary)] hover:text-white hover:bg-white/5"
+                    key={link.label}
+                    onClick={() => handleNavClick(link.href)}
+                    className={`font-racing font-medium text-[12px] tracking-[0.15em] py-2 cursor-pointer transition-colors duration-300 ${
+                      isActive ? "text-[#F5F5F5]" : "text-[#A0A0A0] hover:text-[#F5F5F5]"
                     }`}
                   >
-                    {item.label}
+                    {link.label}
                   </button>
-                ))}
+                );
+              })}
+              <div className="mt-2">
+                <motion.div
+                  animate={{ opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="border border-[#E8000D] text-[#E8000D] font-racing text-[10px] font-bold py-[6px] px-[12px] tracking-[0.1em] rounded-[2px]"
+                >
+                  AVAILABLE FOR HIRE
+                </motion.div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </nav>
     </>
   );
 }

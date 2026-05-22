@@ -7,14 +7,10 @@ import {
   ContactShadows,
   Preload,
 } from "@react-three/drei";
-import {
-  EffectComposer,
-  Bloom,
-  ChromaticAberration,
-  Vignette,
-} from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
 import { motion } from "framer-motion";
+// NOTE: @react-three/postprocessing (EffectComposer) is intentionally excluded.
+// It crashes the R3F reconciler with a null-alpha error on cold mount.
+// Re-enable only after upstream fixes the RenderPass initialization order.
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SCENE — R3F Canvas Wrapper with Studio Lighting
@@ -23,7 +19,6 @@ import { motion } from "framer-motion";
    - Environment map (studio preset) for realistic reflections
    - 3-point SpotLight rig (key, fill, rim)
    - ContactShadows for grounded realism
-   - Post-processing: Bloom, ChromaticAberration, Vignette
    - Custom Loader3D fallback component
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -199,26 +194,7 @@ export default function Scene({
           {/* Scene content (PorscheModel, etc.) */}
           {children}
 
-          {/* Post-processing pipeline */}
-          {showPostProcessing && (
-            <EffectComposer>
-              <Bloom
-                intensity={0.4}
-                luminanceThreshold={0.85}
-                luminanceSmoothing={0.9}
-                blendFunction={BlendFunction.ADD}
-              />
-              <ChromaticAberration
-                blendFunction={BlendFunction.NORMAL}
-                offset={[0.0003, 0.0003]}
-              />
-              <Vignette
-                offset={0.3}
-                darkness={0.5}
-                blendFunction={BlendFunction.NORMAL}
-              />
-            </EffectComposer>
-          )}
+          {/* Post-processing intentionally disabled — see import comment above */}
 
           <Preload all />
         </Canvas>
