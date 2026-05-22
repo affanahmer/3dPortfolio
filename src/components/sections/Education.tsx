@@ -123,7 +123,7 @@ export default function Education() {
         {/* Two-Column Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-[80px] items-start">
           {/* ─── LEFT COLUMN: Education Timeline ─── */}
-          <div className="relative pl-8 min-h-[500px]">
+          <div className="relative min-h-[500px]">
             {/* Vertical timeline line */}
             <div
               ref={verticalLineRef}
@@ -134,10 +134,10 @@ export default function Education() {
               {education.map((item) => (
                 <div
                   key={item.id}
-                  className="relative timeline-node-container opacity-0 translate-y-4"
+                  className="relative timeline-node-container opacity-0 translate-y-4 pl-8"
                 >
-                  {/* Node Dot centered exactly on the 2px line (left-[-5px] centers a 10px dot on a 0px offset line) */}
-                  <div className="absolute left-[-37px] top-[6px] w-[10px] h-[10px] rounded-full bg-[#E8000D] border border-black shadow-[0_0_8px_rgba(232,0,13,0.8)]" />
+                  {/* Node Dot centered exactly on the 2px line */}
+                  <div className="absolute left-[-5px] top-[6px] w-[10px] h-[10px] rounded-full bg-[#E8000D] border border-black shadow-[0_0_8px_rgba(232,0,13,0.8)]" style={{ left: "-5px" }} />
                   
                   {/* Content */}
                   <div>

@@ -32,7 +32,9 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     });
 
     lenisRef.current = lenis;
-    setLenisInstance(lenis);
+    const handle = requestAnimationFrame(() => {
+      setLenisInstance(lenis);
+    });
 
     // Sync Lenis with GSAP ticker for ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
@@ -43,6 +45,7 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      cancelAnimationFrame(handle);
       lenis.destroy();
       lenisRef.current = null;
     };

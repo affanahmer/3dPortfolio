@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { projects } from "@/data/projects";
 import { Project } from "@/types";
+import Image from "next/image";
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -87,10 +88,13 @@ export default function Projects() {
               >
                 {/* Image Area with 16/10 aspect ratio */}
                 <div className="relative w-full aspect-[16/10] overflow-hidden bg-black/40">
-                  <img
+                  <Image
                     src={project.image}
                     alt={project.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    unoptimized
                     onError={(e) => {
                       // Fallback visual if image doesn't exist
                       (e.target as HTMLElement).style.display = "none";
@@ -189,10 +193,13 @@ export default function Projects() {
                     }}
                   />
                 ) : null}
-                <img
+                <Image
                   src={selectedProject.image}
                   alt={selectedProject.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="absolute inset-0 w-full h-full object-cover -z-1"
+                  unoptimized
                 />
               </div>
 

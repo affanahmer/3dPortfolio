@@ -23,6 +23,7 @@ const categories: (SkillCategory | "All")[] = [
 ];
 
 // Helper wrapper to apply useFloat inside map
+// Helper wrapper to apply useFloat inside map
 function FloatingCardWrapper({
   index,
   children,
@@ -30,9 +31,11 @@ function FloatingCardWrapper({
   index: number;
   children: React.ReactNode;
 }) {
-  const floatAnim = useFloat(index);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const floatAnim = useFloat(index, cardRef);
   return (
     <motion.div
+      ref={cardRef}
       animate={floatAnim.animate}
       transition={floatAnim.transition}
       className="w-full h-full"
@@ -171,11 +174,12 @@ export default function TechStack() {
           ))}
         </div>
 
-        {/* Tech Grid (Max-width 900px, Centered) */}
+        {/* Tech Grid (Max-width 900px, Centered, Auto-fill) */}
         <LayoutGroup>
           <div
             ref={gridRef}
-            className="w-full max-w-[900px] mx-auto grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 justify-items-center"
+            className="w-full max-w-[900px] mx-auto grid gap-4 justify-items-center"
+            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))" }}
           >
             <AnimatePresence mode="popLayout">
               {filteredSkills.map((skill, index) => (

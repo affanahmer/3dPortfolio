@@ -1,9 +1,78 @@
 @import "tailwindcss";
-@import "../styles/tokens.css";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   PORSCHE GT3 RS PORTFOLIO — GLOBAL STYLES
+   PORSCHE GT3 RS PORTFOLIO — GLOBAL STYLES & DESIGN TOKENS
    ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── COLOR PALETTE ──────────────────────────────────────────────────── */
+  --color-bg-primary: #0A0A0A;       /* Matte Black — hood finish */
+  --color-bg-surface: #111111;       /* Dark Charcoal */
+  --color-bg-elevated: #1A1A1A;      /* Carbon overlay */
+  --color-accent-red: #E8000D;       /* Guards Red */
+  --color-accent-gold: #C0A060;      /* GT Gold / Racing stripe */
+  --color-accent-blue: #00D4FF;      /* Telemetry Blue — HUD elements */
+  --color-text-primary: #F5F5F5;     /* Pure White */
+  --color-text-secondary: #A0A0A0;   /* Matte Gray */
+  --color-border-subtle: #2A2A2A;    /* Carbon weave line */
+  --color-glow-red: rgba(232, 0, 13, 0.4);
+  --color-glow-blue: rgba(0, 212, 255, 0.3);
+  --color-glow-gold: rgba(192, 160, 96, 0.3);
+
+  /* ─── TYPOGRAPHY SCALE ───────────────────────────────────────────────── */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+  --text-7xl: 4.5rem;
+  --text-8xl: 6rem;
+  --text-9xl: 8rem;
+
+  /* ─── SPACING SYSTEM (GT Grid — 8px base) ────────────────────────────── */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 40px;
+  --space-6: 48px;
+  --space-8: 64px;
+  --space-10: 80px;
+  --space-12: 96px;
+  --space-16: 128px;
+  --space-20: 160px;
+  --space-24: 192px;
+
+  /* ─── BORDER RADIUS ──────────────────────────────────────────────────── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+
+  /* ─── SHADOWS ────────────────────────────────────────────────────────── */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.6);
+  --shadow-glow-red: 0 0 40px var(--color-glow-red);
+  --shadow-glow-blue: 0 0 30px var(--color-glow-blue);
+
+  /* ─── TRANSITIONS ────────────────────────────────────────────────────── */
+  --transition-fast: 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-normal: 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-slow: 500ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ─── Z-INDEX LAYERS ─────────────────────────────────────────────────── */
+  --z-canvas: 1;
+  --z-content: 10;
+  --z-nav: 100;
+  --z-modal: 200;
+  --z-toast: 300;
+}
 
 /* ─── TAILWIND v4 THEME EXTENSION ──────────────────────────────────────── */
 @theme inline {
@@ -16,6 +85,7 @@
   --color-accent-blue: var(--color-accent-blue);
   --color-text-secondary: var(--color-text-secondary);
   --color-border-subtle: var(--color-border-subtle);
+  
   --font-sans: "Inter", "DM Sans", system-ui, sans-serif;
   --font-display: "Space Grotesk", "Inter", sans-serif;
   --font-mono: "JetBrains Mono", "Fira Code", monospace;
@@ -33,15 +103,15 @@
 
 html {
   scroll-behavior: auto; /* Lenis handles smooth scroll */
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
+  background-color: #0A0A0A !important;
+  color: #F5F5F5 !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--color-bg-primary);
-  color: var(--color-text-primary);
+  background: #0A0A0A !important;
+  color: #F5F5F5 !important;
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
@@ -53,11 +123,11 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-primary);
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-accent-red);
+  background: #E8000D;
   border-radius: 3px;
 }
 
@@ -68,18 +138,18 @@ body {
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-accent-red) var(--color-bg-primary);
+  scrollbar-color: #E8000D #0A0A0A;
 }
 
 /* ─── TEXT SELECTION ───────────────────────────────────────────────────── */
 ::selection {
-  background: var(--color-accent-red);
-  color: var(--color-text-primary);
+  background: #E8000D;
+  color: #F5F5F5;
 }
 
 /* ─── FOCUS STYLES (Red racing outline) ────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--color-accent-red);
+  outline: 2px solid #E8000D;
   outline-offset: 2px;
 }
 
@@ -120,11 +190,11 @@ body {
 
 /* ─── RED GLOW EFFECT ──────────────────────────────────────────────────── */
 .glow-red {
-  box-shadow: 0 0 40px var(--color-glow-red);
+  box-shadow: 0 0 40px rgba(232, 0, 13, 0.4);
 }
 
 .glow-red-sm {
-  box-shadow: 0 0 20px var(--color-glow-red);
+  box-shadow: 0 0 20px rgba(232, 0, 13, 0.4);
 }
 
 /* ─── RACING STRIPE ────────────────────────────────────────────────────── */
@@ -132,7 +202,7 @@ body {
   position: absolute;
   width: 200%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-accent-red), transparent);
+  background: linear-gradient(90deg, transparent, #E8000D, transparent);
   transform: rotate(-15deg);
   opacity: 0.6;
 }
@@ -156,14 +226,14 @@ body {
 
 /* ─── UTILITY CLASSES ──────────────────────────────────────────────────── */
 .text-gradient-red {
-  background: linear-gradient(135deg, var(--color-accent-red), #ff4444);
+  background: linear-gradient(135deg, #E8000D, #ff4444);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-gradient-gold {
-  background: linear-gradient(135deg, var(--color-accent-gold), #d4b878);
+  background: linear-gradient(135deg, #C0A060, #d4b878);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

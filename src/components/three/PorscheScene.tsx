@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useRef } from "react";
+import React, { Suspense, useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF, Environment } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
@@ -42,8 +42,8 @@ function CarModel() {
   useFrame((state) => {
     if (groupRef.current) {
       const t = state.clock.getElapsedTime();
-      // Period 6.5s → freq = 2 * PI / 6.5 ≈ 0.966
-      groupRef.current.position.y = Math.sin(t * 0.966) * 0.12;
+      // Period 0.55 per the specifications
+      groupRef.current.position.y = Math.sin(t * 0.55) * 0.12;
       groupRef.current.rotation.y += 0.0015;
     }
   });
@@ -53,7 +53,7 @@ function CarModel() {
     <group ref={groupRef}>
       <primitive 
         object={scene} 
-        scale={0.8} 
+        scale={0.85} 
         position={[0, -0.6, 0]} 
         rotation={[0, -Math.PI / 4, 0]}
       />
@@ -62,7 +62,6 @@ function CarModel() {
 }
 
 // ─── POST PROCESSING COMPONENT ────────────────────────────────────────────────
-// Defer loading to prevent any alpha null reference issues
 function PostEffects() {
   return (
     <EffectComposer>
@@ -89,6 +88,19 @@ function RedSpinner() {
 
 // ─── MAIN PORSCHE SCENE ────────────────────────────────────────────────────────
 export default function PorscheScene() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const handle = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(handle);
+  }, []);
+
+  if (!mounted) {
+    return <RedSpinner />;
+  }
+
   return (
     <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
       <Suspense fallback={<RedSpinner />}>
@@ -127,4 +139,7 @@ export default function PorscheScene() {
 }
 
 // Pre-preload the model
-useGLTF.preload("/models/porsche-911-gt3rs.glb");
+if (typeof window !== "undefined") {
+  useGLTF.preload("/models/porsche-911-gt3rs.glb");
+}
+

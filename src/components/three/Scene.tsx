@@ -25,7 +25,6 @@ import { motion } from "framer-motion";
 interface SceneProps {
   children: ReactNode;
   className?: string;
-  showPostProcessing?: boolean;
   showContactShadows?: boolean;
   cameraPosition?: [number, number, number];
   cameraFov?: number;
@@ -129,7 +128,6 @@ function StudioLights() {
 export default function Scene({
   children,
   className = "",
-  showPostProcessing = true,
   showContactShadows = true,
   cameraPosition = [0, 1.5, 5],
   cameraFov = 45,
