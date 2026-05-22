@@ -458,8 +458,14 @@ class ModelErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryStat
 }
 
 // ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
-// Wraps GLBModel in Error Boundary — falls back to PlaceholderModel on 404
+// Toggle this to true when /public/models/porsche.glb is available
+const USE_GLB_MODEL = false;
+
 export default function PorscheModel(props: PorscheModelProps) {
+  if (!USE_GLB_MODEL) {
+    return <PlaceholderModel {...props} />;
+  }
+
   return (
     <ModelErrorBoundary fallback={<PlaceholderModel {...props} />}>
       <GLBModel {...props} />

@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue, useMotionValueEvent } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SmoothScroll from "@/components/layout/SmoothScroll";
@@ -102,8 +102,6 @@ function ScrollDriven3DCanvas() {
  * Bridge component — reads the MotionValue and passes as plain number
  * useTransform creates a MotionValue; we need to read it inside useFrame
  */
-import { MotionValue, useMotionValueEvent } from "framer-motion";
-import { useState } from "react";
 
 function PersistentCanvasWithMotion({
   scrollProgress,

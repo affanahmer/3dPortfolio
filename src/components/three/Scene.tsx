@@ -149,7 +149,7 @@ export default function Scene({
             near: 0.1,
             far: 100,
           }}
-          dpr={[1, 1.5]}
+          dpr={[1, 1.2]}
           shadows
           gl={{
             antialias: true,
@@ -157,6 +157,19 @@ export default function Scene({
             powerPreference: "high-performance",
             toneMapping: 4, // ACESFilmicToneMapping
             toneMappingExposure: 1.1,
+            failIfMajorPerformanceCaveat: false,
+            preserveDrawingBuffer: true,
+          }}
+          onCreated={({ gl }) => {
+            // Handle WebGL context loss gracefully
+            const canvas = gl.domElement;
+            canvas.addEventListener("webglcontextlost", (e) => {
+              e.preventDefault();
+              console.warn("[Scene] WebGL context lost — attempting recovery");
+            });
+            canvas.addEventListener("webglcontextrestored", () => {
+              console.info("[Scene] WebGL context restored");
+            });
           }}
           style={{ background: "transparent" }}
         >
