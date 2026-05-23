@@ -7,6 +7,7 @@ import Navbar from "@/components/navigation/Navbar";
 import SectionDots from "@/components/navigation/SectionDots";
 
 // Dynamic imports for sections to reduce initial bundle
+const ScrollSequence = dynamic(() => import("@/components/three/ScrollSequence"), { ssr: false });
 const Hero = dynamic(() => import("@/components/sections/Hero"), { ssr: false });
 const About = dynamic(() => import("@/components/sections/About"), { ssr: false });
 const Education = dynamic(() => import("@/components/sections/Education"), { ssr: false });
@@ -22,6 +23,7 @@ export default function Home() {
       <Navbar />
       <SectionDots />
       <PageWrapper>
+        <ScrollSequence />
         <div className="relative z-10">
           <Hero />
           <About />

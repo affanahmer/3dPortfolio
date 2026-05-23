@@ -138,7 +138,7 @@ export default function TechStack() {
           >
             TECH ARSENAL
           </motion.h2>
-          
+
           {/* Red accent line under heading */}
           <motion.div
             initial={{ scaleX: 0 }}
@@ -156,11 +156,10 @@ export default function TechStack() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`relative px-5 py-2 border rounded-[2px] font-racing font-medium text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer ${
-                activeCategory === cat
+              className={`relative px-5 py-2 border rounded-[2px] font-racing font-medium text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer ${activeCategory === cat
                   ? "border-[#E8000D] text-[#F5F5F5] bg-[#E8000D]/5"
                   : "border-[#2A2A2A] text-[#A0A0A0] hover:text-[#F5F5F5] hover:border-[#F5F5F5]/30"
-              }`}
+                }`}
             >
               {activeCategory === cat && (
                 <motion.div

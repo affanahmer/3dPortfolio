@@ -26,7 +26,7 @@ export default function Social() {
           >
             FIND ME ON THE TRACK
           </motion.h2>
-          
+
           {/* Red accent line under heading */}
           <motion.div
             initial={{ scaleX: 0 }}

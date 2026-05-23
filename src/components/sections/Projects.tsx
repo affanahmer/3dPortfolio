@@ -46,7 +46,7 @@ export default function Projects() {
           >
             THE GARAGE
           </motion.h2>
-          
+
           {/* Red accent line under heading */}
           <motion.div
             initial={{ scaleX: 0 }}
@@ -64,11 +64,10 @@ export default function Projects() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 border rounded-[2px] font-racing font-medium text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer ${
-                activeCategory === cat
+              className={`px-4 py-2 border rounded-[2px] font-racing font-medium text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer ${activeCategory === cat
                   ? "border-[#E8000D] text-[#F5F5F5] bg-[#E8000D]/5"
                   : "border-[#2A2A2A] text-[#A0A0A0] hover:text-[#F5F5F5] hover:border-[#F5F5F5]/30"
-              }`}
+                }`}
             >
               {cat === "all" ? "All Projects" : cat === "3d" ? "3D / WebGL" : cat === "ai" ? "AI / ML" : cat}
             </button>
@@ -132,7 +131,7 @@ export default function Projects() {
                   <p className="text-[13px] text-[#A0A0A0] mt-1.5 leading-relaxed flex-1">
                     {project.shortDescription || project.description}
                   </p>
-                  
+
                   {/* Tech Badges */}
                   <div className="flex flex-wrap gap-1.5 mt-4">
                     {project.techStack.map((tech) => (

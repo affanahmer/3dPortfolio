@@ -61,7 +61,7 @@ export default function Education() {
         skillRows.forEach((row) => {
           const fill = row.querySelector(".skill-bar-fill");
           const targetVal = row.getAttribute("data-proficiency");
-          
+
           gsap.fromTo(
             fill,
             { scaleX: 0 },
@@ -108,7 +108,7 @@ export default function Education() {
           >
             EDUCATION & SKILLS
           </motion.h2>
-          
+
           {/* Red accent line under heading */}
           <motion.div
             initial={{ scaleX: 0 }}
@@ -138,7 +138,7 @@ export default function Education() {
                 >
                   {/* Node Dot centered exactly on the 2px line */}
                   <div className="absolute left-[-5px] top-[6px] w-[10px] h-[10px] rounded-full bg-[#E8000D] border border-black shadow-[0_0_8px_rgba(232,0,13,0.8)]" style={{ left: "-5px" }} />
-                  
+
                   {/* Content */}
                   <div>
                     <span className="font-racing text-[12px] text-[#C0A060] uppercase tracking-wider block">

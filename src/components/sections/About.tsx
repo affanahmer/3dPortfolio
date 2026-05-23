@@ -48,7 +48,7 @@ export default function About() {
           >
             PRECISION. PERFORMANCE.
           </motion.h2>
-          
+
           {/* Red accent line under heading */}
           <motion.div
             initial={{ scaleX: 0 }}

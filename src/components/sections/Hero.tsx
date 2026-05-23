@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import PorscheScene from "@/components/three/PorscheScene";
 
 export default function Hero() {
   const nameChars = "AFFAN AHMER".split("");
@@ -60,11 +59,8 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative w-full min-h-screen flex flex-col justify-center items-center overflow-hidden bg-[#0A0A0A] select-none"
+      className="relative w-full min-h-screen flex flex-col justify-center items-center overflow-hidden bg-transparent select-none"
     >
-      {/* ─── BACKGROUND LAYER (z:0) ─── */}
-      <PorscheScene />
-
       {/* ─── RED DIAGONAL HUD LINE ─── */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 z-1">
         <line x1="0" y1="0" x2="100%" y2="100%" stroke="#E8000D" strokeWidth="1" />

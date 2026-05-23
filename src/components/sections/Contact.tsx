@@ -22,9 +22,9 @@ import { headingReveal, staggerContainer, fadeInUp } from "@/animations/variants
 
 // ─── SCHEMA ───────────────────────────────────────────────────────────────────
 const contactSchema = z.object({
-  name:    z.string().min(2,  "Name must be at least 2 characters"),
-  email:   z.string().email( "Please enter a valid email address"),
-  subject: z.string().min(3,  "Subject must be at least 3 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  subject: z.string().min(3, "Subject must be at least 3 characters"),
   message: z.string().min(20, "Message must be at least 20 characters"),
 });
 
@@ -162,9 +162,9 @@ function SubmitButton({ status }: { status: SubmitStatus }) {
         animate={{
           backgroundColor:
             status === "success" ? "#10B981"
-            : status === "error"  ? "#EF4444"
-            : status === "sending" ? "rgba(232,0,13,0.7)"
-            : "#E8000D",
+              : status === "error" ? "#EF4444"
+                : status === "sending" ? "rgba(232,0,13,0.7)"
+                  : "#E8000D",
         }}
         transition={{ duration: 0.4 }}
       />
@@ -312,7 +312,7 @@ export default function Contact() {
           >
             LET&apos;S BUILD SOMETHING
           </motion.h2>
-          
+
           {/* Red accent line under heading */}
           <motion.div
             initial={{ scaleX: 0 }}
