@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import PorscheScene from "@/components/three/PorscheScene";
 
 export default function Hero() {
-  const nameChars = "AFFAN KHAN".split("");
+  const nameChars = "AFFAN AHMER".split("");
 
   // Animation variants
   const containerVariants = {
