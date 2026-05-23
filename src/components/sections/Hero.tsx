@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function Hero() {
   const nameChars = "AFFAN AHMER".split("");
 
-  // Animation variants
+  // Animation variants for reveal
   const containerVariants = {
     animate: {
       transition: {

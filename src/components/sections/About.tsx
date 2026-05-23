@@ -1,9 +1,9 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import { numberRoll } from "@/animations/gsap-sequences";
 import { StatCounter } from "@/types";
+import { AnimatedSection, AnimatedItem } from "@/components/animations";
 
 const stats: StatCounter[] = [
   { label: "Years Experience", value: 6, suffix: "+" },
@@ -36,34 +36,20 @@ export default function About() {
         02 / ABOUT
       </span>
 
-      <div className="w-full flex flex-col mt-8">
+      <AnimatedSection className="w-full flex flex-col mt-8">
         {/* Heading */}
-        <div className="relative">
-          <motion.h2
-            initial={{ opacity: 0, x: -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-[#F5F5F5] mb-4 leading-none"
-          >
+        <AnimatedItem className="relative">
+          <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-[#F5F5F5] mb-4 leading-none">
             PRECISION. PERFORMANCE.
-          </motion.h2>
-
+          </h2>
           {/* Red accent line under heading */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-            style={{ transformOrigin: "left" }}
-            className="w-[60px] h-[3px] bg-[#E8000D] mb-[64px]"
-          />
-        </div>
+          <div className="w-[60px] h-[3px] bg-[#E8000D] mb-[64px]" />
+        </AnimatedItem>
 
         {/* Two-Column Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-[80px] items-center">
           {/* Left Column — Text */}
-          <div className="flex flex-col">
+          <AnimatedItem className="flex flex-col">
             <h3 className="text-xl font-bold text-[#C0A060] tracking-wider mb-6">
               DRIVER PROFILE
             </h3>
@@ -75,45 +61,49 @@ export default function About() {
               software development with an analytical mind and a creative soul. Reaching the apex of
               each project means ensuring perfect execution from core database queries up to visual layouts.
             </p>
-          </div>
+          </AnimatedItem>
 
-          {/* Right Column — Carbon Fiber Texture Card */}
-          <div className="relative">
-            <div className="aspect-[4/3] rounded-[4px] bg-[#111111] carbon-fiber border border-[#2A2A2A] p-8 flex items-center justify-center overflow-hidden">
-              <div className="text-[9rem] font-bold font-racing text-[#E8000D] opacity-10 select-none leading-none tracking-tighter">
-                GT3
+          {/* Right Column — Carbon Fiber Texture Card with frame_040.jpg */}
+          <AnimatedItem className="relative">
+            <div className="aspect-[4/3] rounded-[4px] bg-[#111111] carbon-fiber border border-[#2A2A2A] flex items-center justify-center overflow-hidden relative">
+              <img 
+                src="/assets/porsche-sequence/frame_040.jpg"
+                alt="Porsche Front Profile Frame 040" 
+                className="w-full h-full object-cover opacity-60 mix-blend-lighten"
+              />
+              <div className="absolute bottom-4 left-4 font-mono text-[10px] text-[#A0A0A0] tracking-wider uppercase bg-black/60 px-2 py-1 border border-white/5 rounded-[2px] glass">
+                FRAME_040 / ENGINE COMPONENT
               </div>
             </div>
             {/* Red glow accent */}
             <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-[#E8000D] rounded-full blur-[80px] opacity-15 pointer-events-none" />
-          </div>
+          </AnimatedItem>
         </div>
 
         {/* Stat Counters */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mt-[64px]">
           {stats.map((stat, index) => (
-            <div
-              key={stat.label}
-              className="bg-[#111111] border border-[#2A2A2A] rounded-[4px] p-6 text-center shadow-lg hover:border-[#E8000D]/40 transition-colors duration-300"
-            >
-              <div className="text-3xl md:text-4xl font-bold font-racing text-[#E8000D] mb-2">
-                {stat.prefix}
-                <span
-                  ref={(el) => {
-                    counterRefs.current[index] = el;
-                  }}
-                >
-                  0
-                </span>
-                {stat.suffix}
+            <AnimatedItem key={stat.label}>
+              <div className="bg-[#111111] border border-[#2A2A2A] rounded-[4px] p-6 text-center shadow-lg hover:border-[#E8000D]/40 transition-colors duration-300">
+                <div className="text-3xl md:text-4xl font-bold font-racing text-[#E8000D] mb-2">
+                  {stat.prefix}
+                  <span
+                    ref={(el) => {
+                      counterRefs.current[index] = el;
+                    }}
+                  >
+                    0
+                  </span>
+                  {stat.suffix}
+                </div>
+                <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-racing">
+                  {stat.label}
+                </p>
               </div>
-              <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-racing">
-                {stat.label}
-              </p>
-            </div>
+            </AnimatedItem>
           ))}
         </div>
-      </div>
+      </AnimatedSection>
     </section>
   );
 }

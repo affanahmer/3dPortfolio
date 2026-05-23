@@ -5,14 +5,18 @@ import { useScrollProgress } from "@/hooks/useScrollProgress";
 import { useLenis } from "@/hooks/useLenis";
 
 const SECTIONS = [
-  "hero",
-  "about",
-  "education",
-  "techstack",
-  "projects",
-  "social",
-  "contact",
+  "launch-anchor",
+  "engineering-anchor",
+  "garage-anchor",
+  "outro-anchor",
 ];
+
+const LABELS: Record<string, string> = {
+  "launch-anchor": "LAUNCH",
+  "engineering-anchor": "ENGINEERING",
+  "garage-anchor": "GARAGE",
+  "outro-anchor": "OUTRO",
+};
 
 export default function SectionDots() {
   const { activeSection } = useScrollProgress();
@@ -29,18 +33,19 @@ export default function SectionDots() {
             key={section}
             onClick={() => scrollTo(`#${section}`, { duration: 1.2 })}
             className="group relative flex items-center justify-center cursor-pointer w-[12px] h-[12px]"
-            aria-label={`Scroll to ${section}`}
+            aria-label={`Scroll to ${LABELS[section]}`}
           >
             {/* Tooltip name displayed on hover */}
-            <span className="absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] font-racing text-[#A0A0A0] uppercase tracking-widest whitespace-nowrap">
-              {section === "techstack" ? "arsenal" : section === "projects" ? "garage" : section === "social" ? "track" : section === "education" ? "skills" : section}
+            <span className="absolute right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] font-racing text-text-secondary uppercase tracking-widest whitespace-nowrap">
+              {LABELS[section]}
             </span>
 
             {/* Dot */}
             <motion.div
               animate={{
                 scale: isActive ? 1.5 : 1,
-                backgroundColor: isActive ? "#E8000D" : "#2A2A2A",
+                backgroundColor: isActive ? "#00F0FF" : "#1C1C22",
+                boxShadow: isActive ? "0 0 10px rgba(0, 240, 255, 0.6)" : "none",
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="w-[6px] h-[6px] rounded-full"

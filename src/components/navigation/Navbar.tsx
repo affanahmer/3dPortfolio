@@ -7,12 +7,10 @@ import { useScrollProgress } from "@/hooks/useScrollProgress";
 import ProgressBar from "./ProgressBar";
 
 const NAV_LINKS = [
-  { label: "INTRO", href: "#about", index: 1 },
-  { label: "SKILLS", href: "#education", index: 2 },
-  { label: "ARSENAL", href: "#techstack", index: 3 },
-  { label: "GARAGE", href: "#projects", index: 4 },
-  { label: "TRACK", href: "#social", index: 5 },
-  { label: "BUILD", href: "#contact", index: 6 },
+  { label: "LAUNCH", href: "#launch-anchor", index: 0 },
+  { label: "ENGINEERING", href: "#engineering-anchor", index: 1 },
+  { label: "GARAGE", href: "#garage-anchor", index: 2 },
+  { label: "OUTRO", href: "#outro-anchor", index: 3 },
 ];
 
 export default function Navbar() {
@@ -30,11 +28,11 @@ export default function Navbar() {
       {/* Fixed progress bar at the very top */}
       <ProgressBar />
 
-      <nav className="fixed top-0 left-0 w-full h-[56px] bg-[#0A0A0A]/80 backdrop-blur-[20px] border-b border-white/6 z-50 px-6 md:px-12 flex items-center justify-between select-none">
+      <nav className="fixed top-0 left-0 w-full h-[56px] bg-black/75 backdrop-blur-[24px] border-b border-white/5 z-50 px-6 md:px-12 flex items-center justify-between select-none">
         {/* Left: Monogram */}
         <button
-          onClick={() => handleNavClick("#hero")}
-          className="font-racing font-bold text-[20px] text-[#E8000D] tracking-wider cursor-pointer"
+          onClick={() => handleNavClick("#launch-anchor")}
+          className="font-racing font-bold text-[20px] text-accent-cyan tracking-wider cursor-pointer hover:text-accent-violet transition-colors"
         >
           AK
         </button>
@@ -48,7 +46,7 @@ export default function Navbar() {
                 key={link.label}
                 onClick={() => handleNavClick(link.href)}
                 className={`font-racing font-medium text-[11px] tracking-[0.15em] transition-colors duration-300 cursor-pointer ${
-                  isActive ? "text-[#F5F5F5]" : "text-[#A0A0A0] hover:text-[#F5F5F5]"
+                  isActive ? "text-accent-cyan" : "text-text-secondary hover:text-white"
                 }`}
               >
                 {link.label}
@@ -62,7 +60,7 @@ export default function Navbar() {
           <motion.div
             animate={{ opacity: [0.6, 1, 0.6] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="border border-[#E8000D] text-[#E8000D] font-racing text-[11px] font-bold py-[6px] px-[12px] tracking-[0.1em] rounded-[2px]"
+            className="border border-accent-cyan/60 text-accent-cyan font-racing text-[11px] font-bold py-[6px] px-[12px] tracking-[0.1em] rounded-[2px] shadow-[0_0_10px_rgba(0,240,255,0.15)]"
           >
             AVAILABLE FOR HIRE
           </motion.div>
@@ -71,7 +69,7 @@ export default function Navbar() {
         {/* Mobile menu trigger */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden flex items-center justify-center p-2 cursor-pointer text-[#A0A0A0] hover:text-white"
+          className="md:hidden flex items-center justify-center p-2 cursor-pointer text-text-secondary hover:text-white"
         >
           <svg
             className="w-6 h-6 stroke-current"
@@ -93,7 +91,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-[56px] left-0 w-full bg-[#0A0A0A]/95 border-b border-white/6 flex flex-col items-center gap-4 py-6 md:hidden z-40"
+              className="absolute top-[56px] left-0 w-full bg-black/95 border-b border-white/5 flex flex-col items-center gap-4 py-6 md:hidden z-40"
             >
               {NAV_LINKS.map((link) => {
                 const isActive = activeSection === link.index;
@@ -102,7 +100,7 @@ export default function Navbar() {
                     key={link.label}
                     onClick={() => handleNavClick(link.href)}
                     className={`font-racing font-medium text-[12px] tracking-[0.15em] py-2 cursor-pointer transition-colors duration-300 ${
-                      isActive ? "text-[#F5F5F5]" : "text-[#A0A0A0] hover:text-[#F5F5F5]"
+                      isActive ? "text-accent-cyan" : "text-text-secondary hover:text-white"
                     }`}
                   >
                     {link.label}
@@ -113,7 +111,7 @@ export default function Navbar() {
                 <motion.div
                   animate={{ opacity: [0.6, 1, 0.6] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  className="border border-[#E8000D] text-[#E8000D] font-racing text-[10px] font-bold py-[6px] px-[12px] tracking-[0.1em] rounded-[2px]"
+                  className="border border-accent-cyan/60 text-accent-cyan font-racing text-[10px] font-bold py-[6px] px-[12px] tracking-[0.1em] rounded-[2px]"
                 >
                   AVAILABLE FOR HIRE
                 </motion.div>

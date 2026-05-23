@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { projects } from "@/data/projects";
 import { Project } from "@/types";
 import Image from "next/image";
+import { AnimatedSection, AnimatedItem } from "@/components/animations";
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -34,44 +35,48 @@ export default function Projects() {
         05 / GARAGE
       </span>
 
-      <div className="w-full flex flex-col mt-8">
-        {/* Section Heading */}
-        <div className="relative">
-          <motion.h2
-            initial={{ opacity: 0, x: -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-[#F5F5F5] mb-4 leading-none"
-          >
-            THE GARAGE
-          </motion.h2>
+      <AnimatedSection className="w-full flex flex-col mt-8">
+        {/* Header Block with Title and frame_160.jpg */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-10 w-full">
+          <div className="lg:col-span-7 flex flex-col">
+            <AnimatedItem className="relative">
+              <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-[#F5F5F5] mb-4 leading-none">
+                THE GARAGE
+              </h2>
+              {/* Red accent line under heading */}
+              <div className="w-[60px] h-[3px] bg-[#E8000D] mb-8" />
+            </AnimatedItem>
 
-          {/* Red accent line under heading */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-            style={{ transformOrigin: "left" }}
-            className="w-[60px] h-[3px] bg-[#E8000D] mb-[64px]"
-          />
-        </div>
+            {/* Categories Tab Row */}
+            <AnimatedItem className="flex flex-row flex-wrap gap-2">
+              {["all", "fullstack", "frontend", "3d", "ai", "mobile"].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 border rounded-[2px] font-racing font-medium text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                    activeCategory === cat
+                      ? "border-[#E8000D] text-[#F5F5F5] bg-[#E8000D]/5"
+                      : "border-[#2A2A2A] text-[#A0A0A0] hover:text-[#F5F5F5] hover:border-[#F5F5F5]/30"
+                  }`}
+                >
+                  {cat === "all" ? "All Projects" : cat === "3d" ? "3D / WebGL" : cat === "ai" ? "AI / ML" : cat}
+                </button>
+              ))}
+            </AnimatedItem>
+          </div>
 
-        {/* Categories Tab Row */}
-        <div className="flex flex-row flex-wrap gap-2 mb-10">
-          {["all", "fullstack", "frontend", "3d", "ai", "mobile"].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 border rounded-[2px] font-racing font-medium text-xs tracking-wider uppercase transition-all duration-300 cursor-pointer ${activeCategory === cat
-                  ? "border-[#E8000D] text-[#F5F5F5] bg-[#E8000D]/5"
-                  : "border-[#2A2A2A] text-[#A0A0A0] hover:text-[#F5F5F5] hover:border-[#F5F5F5]/30"
-                }`}
-            >
-              {cat === "all" ? "All Projects" : cat === "3d" ? "3D / WebGL" : cat === "ai" ? "AI / ML" : cat}
-            </button>
-          ))}
+          <AnimatedItem className="lg:col-span-5 w-full">
+            <div className="aspect-[21/9] rounded-[4px] bg-[#111111] border border-[#2A2A2A] overflow-hidden relative">
+              <img 
+                src="/assets/porsche-sequence/frame_160.jpg"
+                alt="Porsche Garage Bay Frame 160" 
+                className="w-full h-full object-cover opacity-60 mix-blend-lighten"
+              />
+              <div className="absolute bottom-3 left-3 font-mono text-[9px] text-[#A0A0A0] tracking-wider uppercase bg-black/60 px-2 py-0.5 border border-white/5 rounded-[2px] glass">
+                FRAME_160 / GARAGE OVERVIEW
+              </div>
+            </div>
+          </AnimatedItem>
         </div>
 
         {/* Projects Grid (3 cols on desktop, 1 col on mobile) */}
@@ -79,76 +84,77 @@ export default function Projects() {
           {filteredProjects.map((project, idx) => {
             const formattedIdx = String(idx + 1).padStart(2, "0");
             return (
-              <motion.div
-                key={project.id}
-                layoutId={`card-container-${project.id}`}
-                whileHover={{ y: -10, scale: 1.02, transition: { duration: 0.3 } }}
-                className="bg-[#111111] border border-[#2A2A2A] rounded-[4px] overflow-hidden flex flex-col group"
-              >
-                {/* Image Area with 16/10 aspect ratio */}
-                <div className="relative w-full aspect-[16/10] overflow-hidden bg-black/40">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    unoptimized
-                    onError={(e) => {
-                      // Fallback visual if image doesn't exist
-                      (e.target as HTMLElement).style.display = "none";
-                    }}
-                  />
-                  {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-[#0A0A0A]/85 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300 z-10">
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className="bg-[#E8000D] text-white px-5 py-2 font-racing font-bold text-xs tracking-wider rounded-[2px] cursor-pointer hover:bg-[#ff1a1a] transition-colors"
-                    >
-                      DETAILS
-                    </button>
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="border border-[#2A2A2A] text-[#F5F5F5] px-5 py-2 font-racing font-bold text-xs tracking-wider rounded-[2px] hover:border-[#F5F5F5] hover:bg-white/5 transition-all"
+              <AnimatedItem key={project.id} className="h-full">
+                <motion.div
+                  layoutId={`card-container-${project.id}`}
+                  whileHover={{ y: -10, scale: 1.02, transition: { duration: 0.3 } }}
+                  className="bg-[#111111] border border-[#2A2A2A] rounded-[4px] overflow-hidden flex flex-col group h-full"
+                >
+                  {/* Image Area with 16/10 aspect ratio */}
+                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-black/40">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      unoptimized
+                      onError={(e) => {
+                        // Fallback visual if image doesn't exist
+                        (e.target as HTMLElement).style.display = "none";
+                      }}
+                    />
+                    {/* Overlay on hover */}
+                    <div className="absolute inset-0 bg-[#0A0A0A]/85 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-3 transition-opacity duration-300 z-10">
+                      <button
+                        onClick={() => setSelectedProject(project)}
+                        className="bg-[#E8000D] text-white px-5 py-2 font-racing font-bold text-xs tracking-wider rounded-[2px] cursor-pointer hover:bg-[#ff1a1a] transition-colors"
                       >
-                        LIVE ↗
-                      </a>
-                    )}
+                        DETAILS
+                      </button>
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="border border-[#2A2A2A] text-[#F5F5F5] px-5 py-2 font-racing font-bold text-xs tracking-wider rounded-[2px] hover:border-[#F5F5F5] hover:bg-white/5 transition-all"
+                        >
+                          LIVE ↗
+                        </a>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                {/* Info Panel */}
-                <div className="p-[20px] md:p-[24px] bg-[#111111] flex flex-col flex-1 border-t border-[#2A2A2A]/40">
-                  <span className="font-racing text-[11px] text-[#E8000D] font-bold tracking-widest block">
-                    {formattedIdx}
-                  </span>
-                  <h3 className="text-[18px] font-semibold text-[#F5F5F5] mt-1 leading-snug">
-                    {project.title}
-                  </h3>
-                  <p className="text-[13px] text-[#A0A0A0] mt-1.5 leading-relaxed flex-1">
-                    {project.shortDescription || project.description}
-                  </p>
-
-                  {/* Tech Badges */}
-                  <div className="flex flex-wrap gap-1.5 mt-4">
-                    {project.techStack.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2 py-0.5 bg-[#1A1A1A] border border-[#2A2A2A] rounded-[2px] font-racing font-medium text-[10px] text-[#A0A0A0] tracking-wider"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+                  {/* Info Panel */}
+                  <div className="p-[20px] md:p-[24px] bg-[#111111] flex flex-col flex-1 border-t border-[#2A2A2A]/40">
+                    <span className="font-racing text-[11px] text-[#E8000D] font-bold tracking-widest block">
+                      {formattedIdx}
+                    </span>
+                    <h3 className="text-[18px] font-semibold text-[#F5F5F5] mt-1 leading-snug">
+                      {project.title}
+                    </h3>
+                    <p className="text-[13px] text-[#A0A0A0] mt-1.5 leading-relaxed flex-1">
+                      {project.shortDescription || project.description}
+                    </p>
+                    
+                    {/* Tech Badges */}
+                    <div className="flex flex-wrap gap-1.5 mt-4">
+                      {project.techStack.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2 py-0.5 bg-[#1A1A1A] border border-[#2A2A2A] rounded-[2px] font-racing font-medium text-[10px] text-[#A0A0A0] tracking-wider"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </AnimatedItem>
             );
           })}
         </div>
-      </div>
+      </AnimatedSection>
 
       {/* ─── DETAIL MODAL (AnimatePresence) ─── */}
       <AnimatePresence>

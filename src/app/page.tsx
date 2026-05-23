@@ -6,7 +6,7 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import Navbar from "@/components/navigation/Navbar";
 import SectionDots from "@/components/navigation/SectionDots";
 
-// Dynamic imports for sections to reduce initial bundle
+// Dynamic imports for sections to reduce initial bundle size
 const ScrollSequence = dynamic(() => import("@/components/three/ScrollSequence"), { ssr: false });
 const Hero = dynamic(() => import("@/components/sections/Hero"), { ssr: false });
 const About = dynamic(() => import("@/components/sections/About"), { ssr: false });
@@ -15,7 +15,6 @@ const TechStack = dynamic(() => import("@/components/sections/TechStack"), { ssr
 const Projects = dynamic(() => import("@/components/sections/Projects"), { ssr: false });
 const Social = dynamic(() => import("@/components/sections/Social"), { ssr: false });
 const Contact = dynamic(() => import("@/components/sections/Contact"), { ssr: false });
-
 
 export default function Home() {
   return (

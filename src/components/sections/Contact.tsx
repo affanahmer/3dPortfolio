@@ -1,24 +1,11 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionValue, useTransform } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { headingReveal, staggerContainer, fadeInUp } from "@/animations/variants";
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   CONTACT FORM — Glassmorphism + Animated Submit
-   
-   sendEmail(data) is a placeholder — integrate EmailJS or Resend here:
-   
-   EmailJS:
-     import emailjs from "@emailjs/browser";
-     await emailjs.send(SERVICE_ID, TEMPLATE_ID, data, PUBLIC_KEY);
-   
-   Resend (API route):
-     await fetch("/api/contact", { method: "POST", body: JSON.stringify(data) });
-   ═══════════════════════════════════════════════════════════════════════════ */
+import { socialLinks } from "@/data/social";
 
 // ─── SCHEMA ───────────────────────────────────────────────────────────────────
 const contactSchema = z.object({
@@ -32,24 +19,6 @@ type ContactForm = z.infer<typeof contactSchema>;
 
 // ─── PLACEHOLDER EMAIL SENDER ─────────────────────────────────────────────────
 async function sendEmail(data: ContactForm): Promise<void> {
-  // ── Integrate EmailJS ──────────────────────────────────────────────────────
-  // import emailjs from "@emailjs/browser";
-  // await emailjs.send("SERVICE_ID", "TEMPLATE_ID", {
-  //   from_name:    data.name,
-  //   from_email:   data.email,
-  //   subject:      data.subject,
-  //   message:      data.message,
-  // }, "YOUR_PUBLIC_KEY");
-
-  // ── OR Resend via Next.js API route ───────────────────────────────────────
-  // const res = await fetch("/api/contact", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify(data),
-  // });
-  // if (!res.ok) throw new Error("Failed to send");
-
-  // Stub: simulate network delay
   console.log("[sendEmail] payload →", data);
   await new Promise((r) => setTimeout(r, 1600));
 }
@@ -71,12 +40,12 @@ function FormField({ id, label, type = "text", error, multiline, registration }:
   const inputClasses = `
     peer w-full px-5 pt-6 pb-3 rounded-xl
     bg-white/5 border transition-all duration-300 outline-none
-    text-[var(--color-text-primary)] font-medium text-base
+    text-white font-medium text-base
     placeholder-transparent
     ${error
       ? "border-red-500/60 focus:border-red-500 shadow-[0_0_0_1px_rgba(239,68,68,0.3)]"
       : focused
-        ? "border-[var(--color-accent-red)]/70 shadow-[0_0_0_1px_rgba(232,0,13,0.25),0_0_20px_rgba(232,0,13,0.08)]"
+        ? "border-accent-cyan/70 shadow-[0_0_0_1px_rgba(0,240,255,0.25),0_0_20px_rgba(0,240,255,0.08)]"
         : "border-white/10 hover:border-white/20"
     }
     ${multiline ? "resize-none" : ""}
@@ -88,18 +57,18 @@ function FormField({ id, label, type = "text", error, multiline, registration }:
       ? "top-2 text-[10px] tracking-widest uppercase"
       : "top-1/2 -translate-y-1/2 text-sm"
     }
-    ${error ? "text-red-400" : focused ? "text-[var(--color-accent-red)]" : "text-[var(--color-text-secondary)]"}
+    ${error ? "text-red-400" : focused ? "text-accent-cyan" : "text-text-secondary"}
   `;
 
   const Tag = multiline ? "textarea" : "input";
 
   return (
-    <motion.div variants={fadeInUp} className="relative">
+    <div className="relative">
       <Tag
         id={id}
         type={multiline ? undefined : type}
         placeholder={label}
-        rows={multiline ? 5 : undefined}
+        rows={multiline ? 4 : undefined}
         {...registration}
         onFocus={() => setFocused(true)}
         onBlur={(e) => {
@@ -119,7 +88,7 @@ function FormField({ id, label, type = "text", error, multiline, registration }:
 
       {/* Focus glow line */}
       <motion.div
-        className="absolute bottom-0 left-0 h-[2px] rounded-b-xl bg-[var(--color-accent-red)]"
+        className="absolute bottom-0 left-0 h-[2px] rounded-b-xl bg-accent-cyan"
         initial={{ scaleX: 0 }}
         animate={{ scaleX: focused ? 1 : 0 }}
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -139,7 +108,7 @@ function FormField({ id, label, type = "text", error, multiline, registration }:
           </motion.p>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
@@ -162,28 +131,34 @@ function SubmitButton({ status }: { status: SubmitStatus }) {
         animate={{
           backgroundColor:
             status === "success" ? "#10B981"
+<<<<<<< HEAD
               : status === "error" ? "#EF4444"
                 : status === "sending" ? "rgba(232,0,13,0.7)"
                   : "#E8000D",
+=======
+            : status === "error"  ? "#EF4444"
+            : status === "sending" ? "rgba(0,240,255,0.7)"
+            : "#00F0FF",
+>>>>>>> 7e5540917a8a1de8d7d13ea24bb5b1471b790646
         }}
         transition={{ duration: 0.4 }}
       />
 
-      {/* Red glow */}
+      {/* Glow */}
       <motion.div
         className="absolute inset-0 rounded-xl"
         animate={{
           boxShadow: status === "success"
             ? "0 0 30px rgba(16,185,129,0.4)"
             : status === "idle"
-              ? "0 0 20px rgba(232,0,13,0.3)"
+              ? "0 0 20px rgba(0,240,255,0.3)"
               : "none",
         }}
         transition={{ duration: 0.4 }}
       />
 
       {/* Content */}
-      <div className="relative z-10 flex items-center justify-center h-full text-white font-bold tracking-[0.2em] uppercase font-[family-name:var(--font-racing)]">
+      <div className={`relative z-10 flex items-center justify-center h-full font-bold tracking-[0.2em] uppercase font-racing ${status === "idle" ? "text-black" : "text-white"}`}>
         <AnimatePresence mode="wait">
           {status === "idle" && (
             <motion.span
@@ -210,7 +185,7 @@ function SubmitButton({ status }: { status: SubmitStatus }) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="flex items-center gap-3"
+              className="flex items-center gap-3 text-white"
             >
               <motion.div
                 className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
@@ -228,9 +203,8 @@ function SubmitButton({ status }: { status: SubmitStatus }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 20 }}
-              className="flex items-center gap-2 text-lg"
+              className="flex items-center gap-2 text-lg text-white"
             >
-              {/* SVG checkmark with draw animation */}
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <motion.path
                   d="M5 13l4 4L19 7"
@@ -253,7 +227,7 @@ function SubmitButton({ status }: { status: SubmitStatus }) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0 }}
-              className="flex items-center gap-2 text-sm"
+              className="flex items-center gap-2 text-sm text-white"
             >
               ✕ Failed — Try Again
             </motion.span>
@@ -264,8 +238,12 @@ function SubmitButton({ status }: { status: SubmitStatus }) {
   );
 }
 
-// ─── MAIN SECTION ─────────────────────────────────────────────────────────────
-export default function Contact() {
+// ─── MAIN CONTACT SECTION ─────────────────────────────────────────────────────
+interface ContactProps {
+  scrollYProgress: MotionValue<number>;
+}
+
+export default function Contact({ scrollYProgress }: ContactProps) {
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -282,7 +260,6 @@ export default function Contact() {
       await sendEmail(data);
       setStatus("success");
       reset();
-      // Reset back to idle after 4 s
       setTimeout(() => setStatus("idle"), 4000);
     } catch {
       setStatus("error");
@@ -290,11 +267,22 @@ export default function Contact() {
     }
   };
 
+  // Map scroll progress to Contact section visibility
+  // Contact is active during 75% - 100% scroll.
+  // Fades in from 75% -> 83%
+  const opacity = useTransform(scrollYProgress, [0.75, 0.83], [0, 1]);
+  const y = useTransform(scrollYProgress, [0.75, 0.83], [60, 0]);
+  const scale = useTransform(scrollYProgress, [0.75, 0.83], [0.97, 1]);
+
+  // Handle pointer-events dynamically to let clicks pass through when faded out
+  const pointerEvents = useTransform(scrollYProgress, (pos) => pos >= 0.75 ? "auto" : "none");
+
   return (
-    <section
-      id="contact"
-      className="relative min-h-screen w-full flex items-center justify-center py-[120px] px-6 md:px-20 max-w-[1280px] mx-auto bg-[#0A0A0A] border-x border-[#1A1A1A]/40 overflow-hidden"
+    <motion.div
+      style={{ opacity, y, scale, pointerEvents }}
+      className="absolute inset-0 flex items-center justify-center p-6 bg-transparent"
     >
+<<<<<<< HEAD
       {/* ─── SECTION NUMBER TAG ─── */}
       <span className="absolute top-6 left-6 md:left-20 font-racing text-[11px] text-[#A0A0A0] tracking-[0.2em]">
         07 / CONTACT
@@ -323,165 +311,140 @@ export default function Contact() {
             className="w-[60px] h-[3px] bg-[#E8000D] mb-[64px]"
           />
         </div>
+=======
+      <div className="w-full max-w-[1180px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        
+        {/* ─── LEFT COLUMN — Info + Social Tracks (5 Cols) ─── */}
+        <div className="lg:col-span-5 flex flex-col text-left">
+          <span className="text-[10px] font-racing text-accent-cyan tracking-[0.25em] uppercase">04 / CONTACT</span>
+          <h2 className="text-3xl font-extrabold text-white font-display mt-2 mb-4 leading-tight tracking-tight">
+            LET&apos;S BUILD SOMETHING.
+          </h2>
+          
+          {/* Neon accent bar */}
+          <div className="w-[50px] h-[3px] bg-gradient-to-r from-accent-cyan to-accent-violet mb-6 rounded-[1px]" />
+          
+          <p className="text-[14px] text-text-secondary leading-relaxed mb-6">
+            Whether you have a project in mind, want to collaborate, or just want to talk
+            code — I&apos;m always up for a conversation.
+          </p>
+>>>>>>> 7e5540917a8a1de8d7d13ea24bb5b1471b790646
 
-        {/* Two-Column Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-[80px] items-start">
-          {/* ─── LEFT COLUMN — Copy + Visual ─── */}
-          <motion.div
-            variants={headingReveal}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-          >
-            <p className="text-lg text-[#A0A0A0] mb-10 leading-relaxed">
-              Whether you have a project in mind, want to collaborate, or just want to talk
-              code — I&apos;m always up for a conversation.
-            </p>
-
-            {/* Contact details */}
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              className="space-y-4 mb-10"
-            >
-              {[
-                { icon: "✉", label: "Email", value: "affan@example.com", href: "mailto:affan@example.com" },
-                { icon: "⚡", label: "Response time", value: "Within 24 hours", href: null },
-                { icon: "🌍", label: "Location", value: "Available Worldwide", href: null },
-              ].map((item) => (
-                <motion.div key={item.label} variants={fadeInUp} className="flex items-center gap-4 group">
-                  <div className="w-10 h-10 rounded-lg bg-[#E8000D]/10 border border-[#E8000D]/20 flex items-center justify-center text-base flex-shrink-0">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-mono text-[#A0A0A0] tracking-widest uppercase">{item.label}</p>
-                    {item.href ? (
-                      <a href={item.href} className="text-sm font-medium text-[#F5F5F5] hover:text-[#E8000D] transition-colors">
-                        {item.value}
-                      </a>
-                    ) : (
-                      <p className="text-sm font-medium text-[#F5F5F5]">{item.value}</p>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* GT3 decorative card */}
-            <motion.div
-              variants={fadeInUp}
-              className="relative rounded-[4px] border border-white/5 overflow-hidden flex items-center justify-center bg-[#111111] carbon-fiber"
-              style={{ height: "180px" }}
-            >
-              <div className="text-[6rem] font-bold font-racing text-[#E8000D] opacity-10 select-none">GT3 RS</div>
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E8000D]/40 to-transparent" />
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
-            </motion.div>
-          </motion.div>
-
-          {/* ─── RIGHT — Glassmorphism Form ───────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* Glass container */}
-            <div
-              className="relative rounded-2xl p-8 md:p-10 overflow-hidden"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                backdropFilter: "blur(24px)",
-                WebkitBackdropFilter: "blur(24px)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                boxShadow: "0 25px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)",
-              }}
-            >
-              {/* Glass shimmer top edge */}
-              <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-              {/* Red corner accent */}
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-5"
-                style={{ background: "radial-gradient(circle at top right, #E8000D, transparent)" }} />
-
-              <motion.form
-                ref={formRef}
-                onSubmit={handleSubmit(onSubmit)}
-                variants={staggerContainer}
-                initial="initial"
-                whileInView="animate"
-                viewport={{ once: true }}
-                className="space-y-5"
-              >
-                {/* Row: Name + Email */}
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <FormField
-                    id="name"
-                    label="Your Name"
-                    error={errors.name?.message}
-                    registration={register("name")}
-                  />
-                  <FormField
-                    id="email"
-                    label="Email Address"
-                    type="email"
-                    error={errors.email?.message}
-                    registration={register("email")}
-                  />
+          {/* Contact details */}
+          <div className="space-y-4 mb-8">
+            {[
+              { icon: "✉", label: "Email", value: "affan@example.com", href: "mailto:affan@example.com" },
+              { icon: "⚡", label: "Response time", value: "Within 24 hours", href: null },
+              { icon: "🌍", label: "Location", value: "Available Worldwide", href: null },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-4 group">
+                <div className="w-9 h-9 rounded-lg bg-accent-cyan/5 border border-accent-cyan/15 flex items-center justify-center text-sm flex-shrink-0 text-accent-cyan">
+                  {item.icon}
                 </div>
+                <div>
+                  <p className="text-[9px] font-mono text-text-secondary/60 tracking-widest uppercase">{item.label}</p>
+                  {item.href ? (
+                    <a href={item.href} className="text-[13px] font-medium text-white hover:text-accent-cyan transition-colors">
+                      {item.value}
+                    </a>
+                  ) : (
+                    <p className="text-[13px] font-medium text-white">{item.value}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
 
-                <FormField
-                  id="subject"
-                  label="Subject"
-                  error={errors.subject?.message}
-                  registration={register("subject")}
-                />
-
-                <FormField
-                  id="message"
-                  label="Your Message"
-                  multiline
-                  error={errors.message?.message}
-                  registration={register("message")}
-                />
-
-                {/* Character count hint */}
-                <motion.p variants={fadeInUp} className="text-[10px] text-[var(--color-text-secondary)]/50 font-mono -mt-2 ml-1">
-                  Minimum 20 characters
-                </motion.p>
-
-                {/* Submit */}
-                <motion.div variants={fadeInUp} className="pt-2">
-                  <SubmitButton status={status} />
-                </motion.div>
-
-                {/* Privacy note */}
-                <motion.p variants={fadeInUp} className="text-[10px] text-center text-[var(--color-text-secondary)]/40 font-mono">
-                  Your data is never shared with third parties.
-                </motion.p>
-              </motion.form>
-            </div>
-          </motion.div>
+          {/* Social platform badges */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {socialLinks.map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 bg-[#070708] border border-white/5 rounded-[2px] font-racing text-[10px] tracking-wider uppercase text-text-secondary hover:text-white hover:border-accent-cyan transition-all duration-300 flex items-center gap-2 glass"
+              >
+                <span>{link.platform}</span>
+                <span className="text-[9px] text-accent-cyan font-mono lowercase">@{link.handle}</span>
+              </a>
+            ))}
+          </div>
         </div>
 
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-          className="mt-24 pt-8 border-t border-[var(--color-border-subtle)] flex flex-col sm:flex-row items-center justify-between gap-4"
-        >
-          <p className="text-sm text-[var(--color-text-secondary)]">
-            © {new Date().getFullYear()} Affan Khan — Built with precision.
-          </p>
-          <p className="text-xs font-mono text-[var(--color-text-secondary)]/40 tracking-widest uppercase">
-            Powered by Next.js · R3F · Framer Motion
-          </p>
-        </motion.div>
+        {/* ─── RIGHT COLUMN — Glassmorphism Form (7 Cols) ─── */}
+        <div className="lg:col-span-7">
+          <div
+            className="relative rounded-2xl p-8 overflow-hidden glass"
+            style={{
+              boxShadow: "0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
+            }}
+          >
+            {/* Shimmer top border line */}
+            <div className="absolute top-0 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {/* Violet corner glow */}
+            <div 
+              className="absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10 pointer-events-none"
+              style={{ background: "radial-gradient(circle at top right, var(--color-accent-violet), transparent 70%)" }} 
+            />
+
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              {/* Row: Name + Email */}
+              <div className="grid sm:grid-cols-2 gap-4">
+                <FormField
+                  id="name"
+                  label="Your Name"
+                  error={errors.name?.message}
+                  registration={register("name")}
+                />
+                <FormField
+                  id="email"
+                  label="Email Address"
+                  type="email"
+                  error={errors.email?.message}
+                  registration={register("email")}
+                />
+              </div>
+
+              <FormField
+                id="subject"
+                label="Subject"
+                error={errors.subject?.message}
+                registration={register("subject")}
+              />
+
+              <FormField
+                id="message"
+                label="Your Message"
+                multiline
+                error={errors.message?.message}
+                registration={register("message")}
+              />
+
+              {/* Character count hint */}
+              <p className="text-[10px] text-text-secondary/40 font-mono -mt-1 ml-1 text-left">
+                Minimum 20 characters
+              </p>
+
+              {/* Submit */}
+              <div className="pt-2">
+                <SubmitButton status={status} />
+              </div>
+
+              {/* Privacy note */}
+              <p className="text-[9px] text-center text-text-secondary/35 font-mono">
+                Your data is never shared with third parties.
+              </p>
+            </form>
+          </div>
+        </div>
+
       </div>
-    </section>
+    </motion.div>
   );
 }
