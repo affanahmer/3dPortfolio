@@ -1,23 +1,22 @@
 "use client";
 
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 
 /**
- * Scroll-linked red progress line at top of viewport
- * Racing lap-timer aesthetic
+ * Scroll-linked cyber-neon progress line at top of viewport
+ * Racing cockpit telemetry aesthetic
  */
 export default function ProgressBar() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
 
   return (
     <motion.div
-      style={{ scaleX }}
-      className="fixed top-0 left-0 right-0 h-[2px] bg-[var(--color-accent-red)] origin-left z-[calc(var(--z-nav)+1)]"
+      style={{ 
+        scaleX: scrollYProgress,
+        transformOrigin: "left",
+        boxShadow: "0 0 10px rgba(0, 240, 255, 0.4)" 
+      }}
+      className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent-cyan to-accent-violet z-[100]"
     />
   );
 }

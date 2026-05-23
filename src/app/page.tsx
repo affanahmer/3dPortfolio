@@ -1,131 +1,68 @@
 "use client";
 
 import { useRef } from "react";
-import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useScroll } from "framer-motion";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import PageWrapper from "@/components/layout/PageWrapper";
 import Navbar from "@/components/navigation/Navbar";
 import SectionDots from "@/components/navigation/SectionDots";
-import Scene from "@/components/three/Scene";
-import PorscheModel from "@/components/three/PorscheModel";
+import GlobalScrollCanvas from "@/components/layout/GlobalScrollCanvas";
+import DashboardHUD from "@/components/layout/DashboardHUD";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+// Import sections directly
+import Hero from "@/components/sections/Hero";
+import About from "@/components/sections/About";
+import Projects from "@/components/sections/Projects";
+import Contact from "@/components/sections/Contact";
 
-// Dynamic imports for sections to reduce initial bundle
-const Hero = dynamic(() => import("@/components/sections/Hero"), { ssr: false });
-const About = dynamic(() => import("@/components/sections/About"), { ssr: false });
-const Education = dynamic(() => import("@/components/sections/Education"), { ssr: false });
-const TechStack = dynamic(() => import("@/components/sections/TechStack"), { ssr: false });
-const Projects = dynamic(() => import("@/components/sections/Projects"), { ssr: false });
-const Social = dynamic(() => import("@/components/sections/Social"), { ssr: false });
-const Contact = dynamic(() => import("@/components/sections/Contact"), { ssr: false });
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   MAIN PAGE — 7-Section Scroll Architecture
-   
-   Key architecture change: The 3D canvas is now a PERSISTENT fixed layer
-   behind all sections (not embedded in Hero). This enables:
-   
-   1. Framer Motion useScroll → tracks global scroll progress (0–1)
-   2. useTransform maps scroll to a MotionValue consumed by PorscheModel
-   3. GSAP camera keyframes animate the car through cinematic poses
-      per section (zoom interior @ Education, drive-off @ Projects)
-   4. Each section's text uses staggered motion.div entrances
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/**
- * Persistent 3D background layer — renders the Porsche model
- * Fixed position behind all content, receives scrollProgress
- */
-function PersistentCanvas({ scrollProgress }: { scrollProgress: number }) {
-  return (
-    <div className="fixed inset-0 z-[var(--z-canvas)] pointer-events-none">
-      <Scene
-        cameraPosition={[3, 1.5, 5]}
-        cameraFov={40}
-        showPostProcessing={true}
-        showContactShadows={true}
-      >
-        <PorscheModel scrollProgress={scrollProgress} />
-      </Scene>
-    </div>
-  );
-}
-
-/**
- * Scroll tracker — uses Framer Motion useScroll at the page level
- * Maps scrollYProgress (0–1) to state consumed by the 3D layer
- */
-function ScrollDriven3DCanvas() {
+export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Framer Motion useScroll — tracks entire page progress
+  // Track global scroll progress through the entire 400vh container path
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
 
-  // Map the MotionValue to a plain number for the 3D model
-  // We sample the MotionValue in a motion component and pass it down
-  const scrollProgressTransformed = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-  return (
-    <div ref={containerRef} className="relative">
-      {/* Persistent 3D background — fixed behind all sections */}
-      <motion.div
-        style={{ opacity: 1 }}
-        className="contents"
-      >
-        <PersistentCanvasWithMotion scrollProgress={scrollProgressTransformed} />
-      </motion.div>
-
-      {/* 7-section content layer */}
-      <div className="relative z-[var(--z-content)]">
-        <Hero />
-        <About />
-        <Education />
-        <TechStack />
-        <Projects />
-        <Social />
-        <Contact />
-      </div>
-    </div>
-  );
-}
-
-/**
- * Bridge component — reads the MotionValue and passes as plain number
- * useTransform creates a MotionValue; we need to read it inside useFrame
- */
-import { MotionValue, useMotionValueEvent } from "framer-motion";
-import { useState } from "react";
-
-function PersistentCanvasWithMotion({
-  scrollProgress,
-}: {
-  scrollProgress: MotionValue<number>;
-}) {
-  const [progress, setProgress] = useState(0);
-
-  useMotionValueEvent(scrollProgress, "change", (latest) => {
-    setProgress(latest);
-  });
-
-  return <PersistentCanvas scrollProgress={progress} />;
-}
-
-export default function Home() {
   return (
     <SmoothScroll>
       <Navbar />
       <SectionDots />
       <PageWrapper>
-        <ScrollDriven3DCanvas />
+        
+        {/* ─── SCROLL RUNWAY CONTAINER (400vh) ─── */}
+        <div ref={containerRef} className="relative w-full h-[400vh] bg-transparent select-none">
+          
+          {/* Absolute Scroll Navigation Anchors */}
+          <div id="launch-anchor" className="absolute top-0 left-0 h-px w-px pointer-events-none" />
+          <div id="engineering-anchor" className="absolute top-[100vh] left-0 h-px w-px pointer-events-none" />
+          <div id="garage-anchor" className="absolute top-[200vh] left-0 h-px w-px pointer-events-none" />
+          <div id="outro-anchor" className="absolute top-[300vh] left-0 h-px w-px pointer-events-none" />
+
+          {/* ─── PERSISTENT CANVAS BACKBONE ─── */}
+          <GlobalScrollCanvas scrollYProgress={scrollYProgress} />
+
+          {/* ─── PERSISTENT Cockpit HUD OVERLAY ─── */}
+          <DashboardHUD scrollYProgress={scrollYProgress} />
+
+          {/* ─── FIXED IMMERSIVE TEXT OVERLAYS LAYER (z:10) ─── */}
+          <div className="fixed inset-0 w-full h-full pointer-events-none z-10 flex items-center justify-center">
+            
+            {/* SECTION 1: LAUNCH (Hero) — 0% - 20% Scroll */}
+            <Hero scrollYProgress={scrollYProgress} />
+
+            {/* SECTION 2: ENGINEERING (About) — 20% - 45% Scroll */}
+            <About scrollYProgress={scrollYProgress} />
+
+            {/* SECTION 3: GARAGE (Projects) — 45% - 75% Scroll */}
+            <Projects scrollYProgress={scrollYProgress} />
+
+            {/* SECTION 4: OUTRO (Contact) — 75% - 100% Scroll */}
+            <Contact scrollYProgress={scrollYProgress} />
+
+          </div>
+
+        </div>
       </PageWrapper>
     </SmoothScroll>
   );

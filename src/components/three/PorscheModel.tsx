@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useEffect, Component, ReactNode } from "react";
 import type { ErrorInfo } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -118,7 +118,6 @@ interface PorscheModelProps {
 function GLBModel({ scrollProgress = 0, color = "#E8000D" }: PorscheModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/porsche.glb");
-  const { gl } = useThree();
 
   // ─── CREATE REALISTIC MATERIALS ──────────────────────────────────────────
   const materials = useMemo(() => {
@@ -222,11 +221,7 @@ function GLBModel({ scrollProgress = 0, color = "#E8000D" }: PorscheModelProps) 
         }
       }
     });
-
-    // Cleanup tone mapping
-    gl.toneMapping = THREE.ACESFilmicToneMapping;
-    gl.toneMappingExposure = 1.2;
-  }, [scene, materials, gl]);
+  }, [scene, materials]);
 
   // ─── ANIMATION LOOP ──────────────────────────────────────────────────────
   useFrame((state) => {
@@ -458,8 +453,14 @@ class ModelErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryStat
 }
 
 // ─── MAIN EXPORT ──────────────────────────────────────────────────────────────
-// Wraps GLBModel in Error Boundary — falls back to PlaceholderModel on 404
+// Toggle this to true when /public/models/porsche.glb is available
+const USE_GLB_MODEL = false;
+
 export default function PorscheModel(props: PorscheModelProps) {
+  if (!USE_GLB_MODEL) {
+    return <PlaceholderModel {...props} />;
+  }
+
   return (
     <ModelErrorBoundary fallback={<PlaceholderModel {...props} />}>
       <GLBModel {...props} />

@@ -7,14 +7,10 @@ import {
   ContactShadows,
   Preload,
 } from "@react-three/drei";
-import {
-  EffectComposer,
-  Bloom,
-  ChromaticAberration,
-  Vignette,
-} from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
 import { motion } from "framer-motion";
+// NOTE: @react-three/postprocessing (EffectComposer) is intentionally excluded.
+// It crashes the R3F reconciler with a null-alpha error on cold mount.
+// Re-enable only after upstream fixes the RenderPass initialization order.
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SCENE — R3F Canvas Wrapper with Studio Lighting
@@ -23,14 +19,12 @@ import { motion } from "framer-motion";
    - Environment map (studio preset) for realistic reflections
    - 3-point SpotLight rig (key, fill, rim)
    - ContactShadows for grounded realism
-   - Post-processing: Bloom, ChromaticAberration, Vignette
    - Custom Loader3D fallback component
    ═══════════════════════════════════════════════════════════════════════════ */
 
 interface SceneProps {
   children: ReactNode;
   className?: string;
-  showPostProcessing?: boolean;
   showContactShadows?: boolean;
   cameraPosition?: [number, number, number];
   cameraFov?: number;
@@ -134,7 +128,6 @@ function StudioLights() {
 export default function Scene({
   children,
   className = "",
-  showPostProcessing = true,
   showContactShadows = true,
   cameraPosition = [0, 1.5, 5],
   cameraFov = 45,
@@ -149,7 +142,7 @@ export default function Scene({
             near: 0.1,
             far: 100,
           }}
-          dpr={[1, 1.5]}
+          dpr={[1, 1.2]}
           shadows
           gl={{
             antialias: true,
@@ -157,6 +150,19 @@ export default function Scene({
             powerPreference: "high-performance",
             toneMapping: 4, // ACESFilmicToneMapping
             toneMappingExposure: 1.1,
+            failIfMajorPerformanceCaveat: false,
+            preserveDrawingBuffer: true,
+          }}
+          onCreated={({ gl }) => {
+            // Handle WebGL context loss gracefully
+            const canvas = gl.domElement;
+            canvas.addEventListener("webglcontextlost", (e) => {
+              e.preventDefault();
+              console.warn("[Scene] WebGL context lost — attempting recovery");
+            });
+            canvas.addEventListener("webglcontextrestored", () => {
+              console.info("[Scene] WebGL context restored");
+            });
           }}
           style={{ background: "transparent" }}
         >
@@ -186,26 +192,7 @@ export default function Scene({
           {/* Scene content (PorscheModel, etc.) */}
           {children}
 
-          {/* Post-processing pipeline */}
-          {showPostProcessing && (
-            <EffectComposer>
-              <Bloom
-                intensity={0.4}
-                luminanceThreshold={0.85}
-                luminanceSmoothing={0.9}
-                blendFunction={BlendFunction.ADD}
-              />
-              <ChromaticAberration
-                blendFunction={BlendFunction.NORMAL}
-                offset={[0.0003, 0.0003]}
-              />
-              <Vignette
-                offset={0.3}
-                darkness={0.5}
-                blendFunction={BlendFunction.NORMAL}
-              />
-            </EffectComposer>
-          )}
+          {/* Post-processing intentionally disabled — see import comment above */}
 
           <Preload all />
         </Canvas>
