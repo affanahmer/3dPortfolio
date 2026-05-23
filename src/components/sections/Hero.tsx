@@ -1,12 +1,31 @@
 "use client";
 
-import { motion } from "framer-motion";
-import PorscheScene from "@/components/three/PorscheScene";
+import { motion, MotionValue, useTransform } from "framer-motion";
+import { useLenis } from "@/hooks/useLenis";
 
-export default function Hero() {
-  const nameChars = "AFFAN KHAN".split("");
+interface HeroProps {
+  scrollYProgress: MotionValue<number>;
+}
 
-  // Animation variants
+export default function Hero({ scrollYProgress }: HeroProps) {
+  const { scrollTo } = useLenis();
+  const nameChars = "AFFAN AHMER".split("");
+
+  // Map scroll progress to Hero opacity, vertical displacement, scale, and pointer-events
+  // Hero is active during 0% - 20% scroll. Fades out between 12% and 20%.
+  const opacity = useTransform(scrollYProgress, [0.12, 0.20], [1, 0]);
+  const y = useTransform(scrollYProgress, [0.12, 0.20], [0, -60]);
+  const scale = useTransform(scrollYProgress, [0.12, 0.20], [1, 0.96]);
+
+  // Disable pointer interactions when faded out to let underlying components receive events
+  const pointerEvents = useTransform(scrollYProgress, (pos) => pos <= 0.20 ? "auto" : "none");
+
+  // Grid line fading out
+  const lineOpacity = useTransform(scrollYProgress, [0, 0.10], [0.2, 0]);
+
+  // Scroll indicator at the bottom (fades out very quickly)
+  const chevronOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+
   const containerVariants = {
     animate: {
       transition: {
@@ -28,17 +47,6 @@ export default function Hero() {
     },
   };
 
-  const hudPulse = {
-    animate: {
-      y: [0, -4, 0],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut" as const,
-      },
-    },
-  };
-
   const chevronAnim = {
     animate: {
       y: [0, 8, 0],
@@ -50,59 +58,23 @@ export default function Hero() {
     },
   };
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
-    <section
-      id="hero"
-      className="relative w-full min-h-screen flex flex-col justify-center items-center overflow-hidden bg-[#0A0A0A] select-none"
+    <motion.div 
+      style={{ opacity, y, scale, pointerEvents }}
+      className="absolute inset-0 flex flex-col justify-center items-center overflow-hidden p-6 bg-transparent"
     >
-      {/* ─── BACKGROUND LAYER (z:0) ─── */}
-      <PorscheScene />
+      
+      {/* ─── CYBER DIAGONAL GRID ACCENT ─── */}
+      <motion.svg 
+        style={{ opacity: lineOpacity }}
+        className="absolute inset-0 w-full h-full pointer-events-none z-1"
+      >
+        <line x1="0" y1="0" x2="100%" y2="100%" stroke="#00F0FF" strokeWidth="1" />
+      </motion.svg>
 
-      {/* ─── RED DIAGONAL HUD LINE ─── */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25 z-1">
-        <line x1="0" y1="0" x2="100%" y2="100%" stroke="#E8000D" strokeWidth="1" />
-      </svg>
-
-      {/* ─── HUD LAYER (z:5) ─── */}
-      <motion.div
-        variants={hudPulse}
-        animate="animate"
-        className="absolute top-6 left-6 z-5 font-racing text-[13px] text-[#A0A0A0] tracking-[0.15em]"
-      >
-        0759
-      </motion.div>
-      <motion.div
-        variants={hudPulse}
-        animate="animate"
-        className="absolute top-6 right-6 z-5 font-racing text-[13px] text-[#E8000D] tracking-[0.15em]"
-      >
-        312
-      </motion.div>
-      <motion.div
-        variants={hudPulse}
-        animate="animate"
-        className="absolute bottom-6 left-6 z-5 font-racing text-[13px] text-[#A0A0A0] tracking-[0.15em]"
-      >
-        TO: INT
-      </motion.div>
-      <motion.div
-        variants={hudPulse}
-        animate="animate"
-        className="absolute bottom-6 right-6 z-5 font-racing text-[13px] text-[#A0A0A0] tracking-[0.15em] flex items-center gap-1.5"
-      >
-        LAP 01
-      </motion.div>
-
-      {/* ─── CONTENT LAYER (z:10) ─── */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 pt-[12vh]">
-        {/* Name — Split into individual chars */}
+      {/* ─── CONTENT CONTAINER ─── */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center pt-[8vh]">
+        {/* Name — Split into individual characters */}
         <motion.h1
           variants={containerVariants}
           initial="initial"
@@ -121,43 +93,47 @@ export default function Hero() {
           ))}
         </motion.h1>
 
-        {/* Role — Fade in with blur */}
+        {/* Role */}
         <motion.p
           initial={{ opacity: 0, filter: "blur(8px)" }}
           animate={{ opacity: 1, filter: "blur(0px)" }}
           transition={{ delay: 0.8, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[13px] font-bold text-[#C0A060] tracking-[0.25em] mt-4"
+          className="text-[12px] font-bold text-accent-cyan tracking-[0.3em] mt-4 uppercase"
         >
           CREATIVE DEVELOPER & ENGINEER
         </motion.p>
 
-        {/* CTA Row */}
+        {/* CTA Buttons */}
         <div className="flex flex-row gap-4 mt-10">
           <motion.button
-            onClick={() => scrollToSection("projects")}
-            whileHover={{ scale: 1.04, boxShadow: "0 0 50px rgba(232,0,13,0.7)" }}
-            className="bg-[#E8000D] text-white px-[36px] py-[14px] font-bold text-[13px] font-racing tracking-[0.15em] rounded-[2px] shadow-[0_0_30px_rgba(232,0,13,0.5)] transition-shadow duration-300 cursor-pointer"
+            onClick={() => scrollTo("#garage-anchor")}
+            whileHover={{ scale: 1.04, boxShadow: "0 0 40px rgba(0,240,255,0.6)" }}
+            className="bg-accent-cyan text-black px-[36px] py-[14px] font-bold text-[13px] font-racing tracking-[0.15em] rounded-[2px] transition-all duration-300 cursor-pointer shadow-[0_0_20px_rgba(0,240,255,0.3)]"
           >
-            VIEW WORK
+            VIEW GARAGE
           </motion.button>
           <button
-            onClick={() => scrollToSection("contact")}
-            className="border border-[rgba(245,245,245,0.3)] text-[#F5F5F5] bg-transparent px-[36px] py-[14px] font-bold text-[13px] font-racing tracking-[0.15em] rounded-[2px] hover:border-[#F5F5F5] hover:bg-white/5 transition-all duration-300 cursor-pointer"
+            onClick={() => scrollTo("#outro-anchor")}
+            className="border border-white/20 text-[#F5F5F5] bg-transparent px-[36px] py-[14px] font-bold text-[13px] font-racing tracking-[0.15em] rounded-[2px] hover:border-accent-cyan hover:bg-accent-cyan/5 transition-all duration-300 cursor-pointer"
           >
             CONTACT
           </button>
         </div>
       </div>
 
-      {/* ─── SCROLL INDICATOR (z:10) ─── */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 cursor-pointer" onClick={() => scrollToSection("about")}>
-        <span className="text-[11px] font-racing text-[#A0A0A0] tracking-[0.2em] font-medium">SCROLL</span>
-        <motion.div variants={chevronAnim} animate="animate" className="text-[#A0A0A0] flex justify-center items-center">
+      {/* ─── SCROLL INDICATOR ─── */}
+      <motion.div 
+        style={{ opacity: chevronOpacity }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 cursor-pointer" 
+        onClick={() => scrollTo("#engineering-anchor")}
+      >
+        <span className="text-[11px] font-racing text-text-secondary tracking-[0.2em] font-medium">SCROLL START</span>
+        <motion.div variants={chevronAnim} animate="animate" className="text-text-secondary flex justify-center items-center">
           <svg width="14" height="8" viewBox="0 0 14 8" fill="none" className="stroke-current" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M1 1L7 7L13 1" />
           </svg>
         </motion.div>
-      </div>
-    </section>
+      </motion.div>
+    </motion.div>
   );
 }

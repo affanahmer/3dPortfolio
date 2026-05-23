@@ -3,8 +3,8 @@
 import { motion, useScroll } from "framer-motion";
 
 /**
- * Scroll-linked red progress line at top of viewport
- * Racing lap-timer aesthetic
+ * Scroll-linked cyber-neon progress line at top of viewport
+ * Racing cockpit telemetry aesthetic
  */
 export default function ProgressBar() {
   const { scrollYProgress } = useScroll();
@@ -14,9 +14,9 @@ export default function ProgressBar() {
       style={{ 
         scaleX: scrollYProgress,
         transformOrigin: "left",
-        boxShadow: "0 0 8px #E8000D" 
+        boxShadow: "0 0 10px rgba(0, 240, 255, 0.4)" 
       }}
-      className="fixed top-0 left-0 right-0 h-[2px] bg-[#E8000D] z-[100]"
+      className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent-cyan to-accent-violet z-[100]"
     />
   );
 }
